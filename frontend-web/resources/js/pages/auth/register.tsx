@@ -50,18 +50,18 @@ export default function Register() {
         <AuthLayout title="Crear cuenta ProviEmplea" description="Elige si registras una persona o una empresa">
             <Head title="Registro" />
             <form className="flex flex-col gap-6" onSubmit={submit}>
-                <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1">
+                <div className="grid grid-cols-2 gap-2 rounded-2xl bg-provi-light p-1">
                     <button
                         type="button"
                         onClick={() => setAccountType('persona')}
-                        className={`rounded-xl px-4 py-3 text-sm font-bold ${accountType === 'persona' ? 'bg-white text-teal-800 shadow-sm' : 'text-slate-600'}`}
+                        className={`rounded-xl px-4 py-3 text-sm font-bold ${accountType === 'persona' ? 'bg-white text-provi-secondary shadow-sm' : 'text-provi-muted'}`}
                     >
                         Persona
                     </button>
                     <button
                         type="button"
                         onClick={() => setAccountType('empresa')}
-                        className={`rounded-xl px-4 py-3 text-sm font-bold ${accountType === 'empresa' ? 'bg-white text-teal-800 shadow-sm' : 'text-slate-600'}`}
+                        className={`rounded-xl px-4 py-3 text-sm font-bold ${accountType === 'empresa' ? 'bg-white text-provi-secondary shadow-sm' : 'text-provi-muted'}`}
                     >
                         Empresa
                     </button>
@@ -131,7 +131,7 @@ export default function Register() {
 
                     <InputError message={error} />
 
-                    <Button type="submit" className="mt-2 w-full bg-teal-700 hover:bg-teal-800" tabIndex={5} disabled={processing}>
+                    <Button type="submit" className="mt-2 w-full bg-provi-purple font-bold hover:bg-provi-purple/90" tabIndex={5} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Crear cuenta {accountType}
                     </Button>

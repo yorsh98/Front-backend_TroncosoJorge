@@ -43,7 +43,7 @@ export default function Login() {
             <Head title="Ingresar" />
 
             <form className="flex flex-col gap-6" onSubmit={submit}>
-                <div className="rounded-2xl border border-teal-100 bg-teal-50 p-4 text-sm text-teal-900">
+                <div className="rounded-2xl border border-provi-primary/20 bg-provi-primary/10 p-4 text-sm font-medium text-provi-dark">
                     Autenticacion conectada a `POST /api/v1/auth/login` mediante Bearer Token Sanctum.
                 </div>
                 <div className="grid gap-6">
@@ -78,7 +78,7 @@ export default function Login() {
 
                     <InputError message={error} />
 
-                    <Button type="submit" className="mt-2 w-full bg-teal-700 hover:bg-teal-800" tabIndex={3} disabled={processing}>
+                    <Button type="submit" className="mt-2 w-full bg-provi-purple font-bold hover:bg-provi-purple/90" tabIndex={3} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Ingresar con API
                     </Button>

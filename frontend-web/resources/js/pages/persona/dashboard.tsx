@@ -246,11 +246,11 @@ export default function PersonaDashboard() {
         <RoleLayout role="persona" title="Panel Persona">
             <Head title="Panel Persona" />
 
-            <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-teal-100 bg-white p-6 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+            <div className="provi-card mb-6 flex flex-col gap-4 overflow-hidden p-6 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <p className="text-sm font-bold tracking-[0.25em] text-teal-700 uppercase">ProviEmplea 2026</p>
-                    <h2 className="mt-2 text-3xl font-black text-slate-950">Completa tu perfil laboral</h2>
-                    <p className="mt-2 text-slate-600">{user ? `${user.name} · ${user.email}` : 'Sesion persona con Bearer Token'}</p>
+                    <p className="provi-chip w-fit">ProviEmplea 2026</p>
+                    <h2 className="mt-3 text-3xl font-black text-provi-dark lg:text-4xl">Completa tu perfil laboral</h2>
+                    <p className="mt-2 text-provi-muted">{user ? `${user.name} · ${user.email}` : 'Sesion persona con Bearer Token'}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={() => void loadPersonaData()} disabled={loading}>
@@ -262,24 +262,24 @@ export default function PersonaDashboard() {
                 </div>
             </div>
 
-            {message && <div className="mb-4 rounded-2xl bg-emerald-50 p-4 text-sm font-medium text-emerald-800">{message}</div>}
+            {message && <div className="mb-4 rounded-2xl bg-provi-green/10 p-4 text-sm font-bold text-provi-green">{message}</div>}
             <InputError message={error} className="mb-4 rounded-2xl bg-red-50 p-4" />
 
             {loading ? (
-                <div className="rounded-3xl bg-white p-10 text-center text-slate-600">Cargando informacion persona...</div>
+                <div className="provi-card p-10 text-center text-provi-muted">Cargando informacion persona...</div>
             ) : (
                 <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <section className="provi-card p-6">
                         <div className="mb-6 flex items-center justify-between gap-4">
                             <div>
-                                <h3 className="text-2xl font-black text-slate-950">Perfil laboral</h3>
-                                <p className="text-sm text-slate-600">
+                                <h3 className="text-2xl font-black text-provi-dark">Perfil laboral</h3>
+                                <p className="text-sm text-provi-muted">
                                     Estado: {profile?.status ?? 'draft'} · Codigo: {profile?.talent_code ?? 'pendiente'}
                                 </p>
                             </div>
                             <div className="text-right">
-                                <p className="text-3xl font-black text-teal-700">{completion?.percentage ?? 0}%</p>
-                                <p className="text-xs text-slate-500">completitud</p>
+                                <p className="text-4xl font-black text-provi-primary">{completion?.percentage ?? 0}%</p>
+                                <p className="text-xs font-bold tracking-[0.16em] text-provi-muted uppercase">completitud</p>
                             </div>
                         </div>
 
@@ -357,13 +357,13 @@ export default function PersonaDashboard() {
                                     />
                                 </div>
                             </div>
-                            <Button type="submit" className="bg-teal-700 hover:bg-teal-800" disabled={saving}>
+                            <Button type="submit" className="bg-provi-secondary font-bold hover:bg-provi-secondary/90" disabled={saving}>
                                 {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                                 Guardar perfil
                             </Button>
                         </form>
 
-                        <form className="mt-8 rounded-2xl bg-slate-50 p-4" onSubmit={addSkill}>
+                        <form className="mt-8 rounded-[1.5rem] bg-provi-light p-4" onSubmit={addSkill}>
                             <Label htmlFor="skill">Agregar competencia</Label>
                             <div className="mt-2 flex gap-2">
                                 <Input
@@ -378,7 +378,7 @@ export default function PersonaDashboard() {
                             </div>
                             <div className="mt-4 flex flex-wrap gap-2">
                                 {profile?.skills?.map((skill) => (
-                                    <span key={skill.id} className="rounded-full bg-white px-3 py-1 text-sm text-slate-700 shadow-sm">
+                                    <span key={skill.id} className="rounded-full bg-white px-3 py-1 text-sm font-medium text-provi-muted shadow-sm">
                                         {skill.name}
                                     </span>
                                 ))}
@@ -387,19 +387,19 @@ export default function PersonaDashboard() {
                     </section>
 
                     <aside className="grid gap-6">
-                        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                            <h3 className="text-2xl font-black text-slate-950">Carga de CV</h3>
-                            <p className="mt-2 text-sm text-slate-600">
+                        <section className="provi-card p-6">
+                            <h3 className="text-2xl font-black text-provi-dark">Carga de CV</h3>
+                            <p className="mt-2 text-sm text-provi-muted">
                                 Formatos aceptados: PDF, DOCX o DOC. Maximo 15 MB. El archivo real queda privado.
                             </p>
                             <form className="mt-5 grid gap-4" onSubmit={uploadCv}>
                                 <Input type="file" accept=".pdf,.doc,.docx" onChange={(event) => setCvFile(event.target.files?.[0] ?? null)} />
-                                <label className="flex gap-3 rounded-2xl bg-teal-50 p-4 text-sm text-teal-950">
+                                <label className="flex gap-3 rounded-2xl bg-provi-primary/10 p-4 text-sm font-medium text-provi-dark">
                                     <input type="checkbox" checked={consentAccepted} onChange={(event) => setConsentAccepted(event.target.checked)} />
                                     Acepto que mi CV sea procesado para generar perfil laboral y CV ciego. Mis datos personales no seran visibles para
                                     empresas.
                                 </label>
-                                <Button type="submit" className="bg-teal-700 hover:bg-teal-800" disabled={uploading || !consentAccepted}>
+                                <Button type="submit" className="bg-provi-purple font-bold hover:bg-provi-purple/90" disabled={uploading || !consentAccepted}>
                                     {uploading && <LoaderCircle className="h-4 w-4 animate-spin" />}
                                     Subir CV
                                 </Button>
@@ -407,9 +407,9 @@ export default function PersonaDashboard() {
 
                             <div className="mt-6 grid gap-3">
                                 {uploads.map((upload) => (
-                                    <div key={upload.id} className="rounded-2xl border border-slate-100 p-4">
-                                        <p className="font-bold text-slate-900">{upload.original_filename}</p>
-                                        <p className="text-sm text-slate-600">Estado: {upload.status}</p>
+                                    <div key={upload.id} className="rounded-2xl border border-slate-100 bg-white/70 p-4 shadow-sm">
+                                        <p className="font-bold text-provi-dark">{upload.original_filename}</p>
+                                        <p className="text-sm text-provi-muted">Estado: {upload.status}</p>
                                         <Button
                                             className="mt-3"
                                             size="sm"
@@ -425,16 +425,16 @@ export default function PersonaDashboard() {
                         </section>
 
                         {analysis && (
-                            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                                <h3 className="text-xl font-black text-slate-950">Analisis CV #{analysis.id}</h3>
-                                <p className="mt-2 text-sm text-slate-600">
+                            <section className="provi-card p-6">
+                                <h3 className="text-xl font-black text-provi-dark">Analisis CV #{analysis.id}</h3>
+                                <p className="mt-2 text-sm text-provi-muted">
                                     Fuente: {analysis.source} · Confianza: {analysis.confidence_score ?? 'N/A'}
                                 </p>
                                 <pre className="mt-4 max-h-72 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100">
                                     {JSON.stringify(analysis.result, null, 2)}
                                 </pre>
                                 <Button
-                                    className="mt-4 bg-teal-700 hover:bg-teal-800"
+                                    className="mt-4 bg-provi-secondary font-bold hover:bg-provi-secondary/90"
                                     onClick={() => void applyAnalysis()}
                                     disabled={Boolean(analysis.applied_at)}
                                 >
@@ -443,11 +443,11 @@ export default function PersonaDashboard() {
                             </section>
                         )}
 
-                        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <section className="provi-card p-6">
                             <div className="flex items-center justify-between gap-4">
                                 <div>
-                                    <h3 className="text-xl font-black text-slate-950">CV ciego</h3>
-                                    <p className="text-sm text-slate-600">Preview sin datos personales directos.</p>
+                                    <h3 className="text-xl font-black text-provi-dark">CV ciego</h3>
+                                    <p className="text-sm text-provi-muted">Preview sin datos personales directos.</p>
                                 </div>
                                 <Button variant="outline" onClick={() => void requestValidation()}>
                                     Solicitar validacion

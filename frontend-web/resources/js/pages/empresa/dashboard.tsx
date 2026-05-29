@@ -214,11 +214,11 @@ export default function EmpresaDashboard() {
         <RoleLayout role="empresa" title="Panel Empresa">
             <Head title="Panel Empresa" />
 
-            <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-teal-100 bg-white p-6 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+            <div className="provi-card mb-6 flex flex-col gap-4 p-6 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <p className="text-sm font-bold tracking-[0.25em] text-teal-700 uppercase">ProviEmplea 2026</p>
-                    <h2 className="mt-2 text-3xl font-black text-slate-950">Vitrina de talentos con CV ciego</h2>
-                    <p className="mt-2 text-slate-600">{user ? `${user.name} · ${user.email}` : 'Sesion empresa con Bearer Token'}</p>
+                    <p className="provi-chip w-fit">ProviEmplea 2026</p>
+                    <h2 className="mt-3 text-3xl font-black text-provi-dark lg:text-4xl">Vitrina de talentos con CV ciego</h2>
+                    <p className="mt-2 text-provi-muted">{user ? `${user.name} · ${user.email}` : 'Sesion empresa con Bearer Token'}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={() => void searchTalents()} disabled={searching}>
@@ -230,21 +230,21 @@ export default function EmpresaDashboard() {
                 </div>
             </div>
 
-            {message && <div className="mb-4 rounded-2xl bg-emerald-50 p-4 text-sm font-medium text-emerald-800">{message}</div>}
+            {message && <div className="mb-4 rounded-2xl bg-provi-green/10 p-4 text-sm font-bold text-provi-green">{message}</div>}
             <InputError message={error} className="mb-4 rounded-2xl bg-red-50 p-4" />
 
             {loading ? (
-                <div className="rounded-3xl bg-white p-10 text-center text-slate-600">Cargando informacion empresa...</div>
+                <div className="provi-card p-10 text-center text-provi-muted">Cargando informacion empresa...</div>
             ) : (
                 <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
                     <aside className="grid gap-6">
-                        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                        <section className="provi-card p-6">
                             <div className="mb-5 flex items-start justify-between gap-4">
                                 <div>
-                                    <h3 className="text-2xl font-black text-slate-950">Perfil empresa</h3>
-                                    <p className="text-sm text-slate-600">Estado: {company?.status ?? 'pending_validation'}</p>
+                                    <h3 className="text-2xl font-black text-provi-dark">Perfil empresa</h3>
+                                    <p className="text-sm text-provi-muted">Estado: {company?.status ?? 'pending_validation'}</p>
                                 </div>
-                                <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-bold text-teal-800">
+                                <span className="rounded-full bg-provi-primary/10 px-3 py-1 text-xs font-bold text-provi-secondary">
                                     {company?.status === 'active' ? 'Puede solicitar contacto' : 'Validacion pendiente'}
                                 </span>
                             </div>
@@ -303,24 +303,24 @@ export default function EmpresaDashboard() {
                                         />
                                     </div>
                                 </div>
-                                <Button type="submit" className="bg-teal-700 hover:bg-teal-800" disabled={saving}>
+                                <Button type="submit" className="bg-provi-secondary font-bold hover:bg-provi-secondary/90" disabled={saving}>
                                     {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                                     Guardar empresa
                                 </Button>
                             </form>
                         </section>
 
-                        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                            <h3 className="text-xl font-black text-slate-950">Solicitudes enviadas</h3>
+                        <section className="provi-card p-6">
+                            <h3 className="text-xl font-black text-provi-dark">Solicitudes enviadas</h3>
                             <div className="mt-4 grid gap-3">
-                                {contactRequests.length === 0 && <p className="text-sm text-slate-600">Aun no hay solicitudes de contacto.</p>}
+                                {contactRequests.length === 0 && <p className="text-sm text-provi-muted">Aun no hay solicitudes de contacto.</p>}
                                 {contactRequests.map((request) => (
-                                    <div key={request.id} className="rounded-2xl bg-slate-50 p-4">
-                                        <p className="font-bold text-slate-900">
+                                    <div key={request.id} className="rounded-2xl bg-provi-light p-4">
+                                        <p className="font-bold text-provi-dark">
                                             {request.blind_cv_profile?.blind_cv_code ?? `Solicitud #${request.id}`}
                                         </p>
-                                        <p className="text-sm text-slate-600">Estado: {request.status}</p>
-                                        {request.position_offered && <p className="mt-1 text-sm text-slate-600">Cargo: {request.position_offered}</p>}
+                                        <p className="text-sm text-provi-muted">Estado: {request.status}</p>
+                                        {request.position_offered && <p className="mt-1 text-sm text-provi-muted">Cargo: {request.position_offered}</p>}
                                     </div>
                                 ))}
                             </div>
@@ -328,8 +328,8 @@ export default function EmpresaDashboard() {
                     </aside>
 
                     <main className="grid gap-6">
-                        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                            <h3 className="text-2xl font-black text-slate-950">Buscar talentos</h3>
+                        <section className="provi-card p-6">
+                            <h3 className="text-2xl font-black text-provi-dark">Buscar talentos</h3>
                             <form
                                 className="mt-5 grid gap-4 lg:grid-cols-5"
                                 onSubmit={(event) => {
@@ -357,11 +357,11 @@ export default function EmpresaDashboard() {
                                     value={filters.availability}
                                     onChange={(event) => updateFilter('availability', event.target.value)}
                                 />
-                                <Button type="submit" className="bg-teal-700 hover:bg-teal-800" disabled={searching}>
+                                <Button type="submit" className="bg-provi-purple font-bold hover:bg-provi-purple/90" disabled={searching}>
                                     {searching ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                                     Buscar
                                 </Button>
-                                <label className="flex items-center gap-2 text-sm text-slate-700 lg:col-span-5">
+                                <label className="flex items-center gap-2 text-sm text-provi-muted lg:col-span-5">
                                     <input
                                         type="checkbox"
                                         checked={filters.disability}
@@ -373,17 +373,17 @@ export default function EmpresaDashboard() {
 
                             <div className="mt-6 grid gap-4 md:grid-cols-2">
                                 {talents.length === 0 && (
-                                    <p className="text-sm text-slate-600 md:col-span-2">No hay talentos publicados para los filtros actuales.</p>
+                                    <p className="text-sm text-provi-muted md:col-span-2">No hay talentos publicados para los filtros actuales.</p>
                                 )}
                                 {talents.map((talent) => (
-                                    <article key={talent.blind_cv_code} className="rounded-3xl border border-slate-100 bg-slate-50 p-5">
-                                        <p className="text-xs font-bold tracking-[0.2em] text-teal-700 uppercase">{talent.blind_cv_code}</p>
-                                        <h4 className="mt-3 line-clamp-3 font-bold text-slate-950">{talent.summary ?? 'Perfil laboral publicado'}</h4>
+                                    <article key={talent.blind_cv_code} className="rounded-[1.75rem] border border-white bg-provi-light p-5 shadow-sm">
+                                        <p className="text-xs font-bold tracking-[0.2em] text-provi-secondary uppercase">{talent.blind_cv_code}</p>
+                                        <h4 className="mt-3 line-clamp-3 font-bold text-provi-dark">{talent.summary ?? 'Perfil laboral publicado'}</h4>
                                         <div className="mt-4 flex flex-wrap gap-2">
                                             {asList(talent.technical_skills)
                                                 .slice(0, 4)
                                                 .map((skill) => (
-                                                    <span key={skill} className="rounded-full bg-white px-3 py-1 text-xs text-slate-700 shadow-sm">
+                                                    <span key={skill} className="rounded-full bg-white px-3 py-1 text-xs font-medium text-provi-muted shadow-sm">
                                                         {skill}
                                                     </span>
                                                 ))}
@@ -397,15 +397,15 @@ export default function EmpresaDashboard() {
                         </section>
 
                         {selectedTalent && (
-                            <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                            <section className="provi-card p-6">
                                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                                     <div>
-                                        <p className="text-sm font-bold tracking-[0.25em] text-teal-700 uppercase">CV ciego</p>
-                                        <h3 className="mt-2 text-2xl font-black text-slate-950">{selectedTalent.blind_cv_code}</h3>
-                                        <p className="mt-3 max-w-3xl leading-7 text-slate-700">{selectedTalent.summary}</p>
+                                        <p className="provi-chip w-fit">CV ciego</p>
+                                        <h3 className="mt-3 text-2xl font-black text-provi-dark">{selectedTalent.blind_cv_code}</h3>
+                                        <p className="mt-3 max-w-3xl leading-7 text-provi-muted">{selectedTalent.summary}</p>
                                     </div>
                                     {selectedTalent.show_law_21015 && (
-                                        <span className="rounded-full bg-purple-50 px-3 py-1 text-sm font-bold text-purple-800">Ley 21.015</span>
+                                         <span className="rounded-full bg-provi-purple/10 px-3 py-1 text-sm font-bold text-provi-purple">Ley 21.015</span>
                                     )}
                                 </div>
 
@@ -416,9 +416,9 @@ export default function EmpresaDashboard() {
                                     <InfoBlock title="Condiciones deseadas" value={selectedTalent.desired_conditions} />
                                 </div>
 
-                                <form className="mt-6 rounded-3xl bg-teal-50 p-5" onSubmit={requestContact}>
-                                    <h4 className="text-lg font-black text-slate-950">Solicitar contacto intermediado</h4>
-                                    <p className="mt-1 text-sm text-slate-700">
+                                <form className="mt-6 rounded-[1.75rem] bg-provi-primary/10 p-5" onSubmit={requestContact}>
+                                    <h4 className="text-lg font-black text-provi-dark">Solicitar contacto intermediado</h4>
+                                    <p className="mt-1 text-sm text-provi-muted">
                                         La empresa no recibe datos personales directos. El Departamento de Empleo revisa y gestiona el contacto.
                                     </p>
                                     <div className="mt-4 grid gap-4 md:grid-cols-2">
@@ -442,7 +442,7 @@ export default function EmpresaDashboard() {
                                             />
                                         </div>
                                     </div>
-                                    <Button type="submit" className="mt-4 bg-teal-700 hover:bg-teal-800" disabled={requesting}>
+                                    <Button type="submit" className="mt-4 bg-provi-secondary font-bold hover:bg-provi-secondary/90" disabled={requesting}>
                                         {requesting && <LoaderCircle className="h-4 w-4 animate-spin" />}
                                         Solicitar contacto
                                     </Button>
@@ -460,14 +460,14 @@ function InfoBlock({ title, value }: { title: string; value: unknown }) {
     const items = asList(value);
 
     return (
-        <div className="rounded-2xl bg-slate-50 p-4">
-            <h4 className="font-bold text-slate-950">{title}</h4>
+        <div className="rounded-2xl bg-provi-light p-4">
+            <h4 className="font-bold text-provi-dark">{title}</h4>
             {items.length === 0 ? (
-                <p className="mt-2 text-sm text-slate-500">Sin informacion publicada.</p>
+                <p className="mt-2 text-sm text-provi-muted">Sin informacion publicada.</p>
             ) : (
                 <div className="mt-3 flex flex-wrap gap-2">
                     {items.map((item) => (
-                        <span key={item} className="rounded-full bg-white px-3 py-1 text-xs text-slate-700 shadow-sm">
+                        <span key={item} className="rounded-full bg-white px-3 py-1 text-xs font-medium text-provi-muted shadow-sm">
                             {item}
                         </span>
                     ))}

@@ -213,11 +213,11 @@ export default function AdminDashboard() {
         <RoleLayout role="admin" title="Panel Administracion">
             <Head title="Panel Admin" />
 
-            <div className="mb-6 flex flex-col gap-4 rounded-3xl border border-teal-100 bg-white p-6 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+            <div className="provi-card mb-6 flex flex-col gap-4 p-6 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <p className="text-sm font-bold tracking-[0.25em] text-teal-700 uppercase">ProviEmplea 2026</p>
-                    <h2 className="mt-2 text-3xl font-black text-slate-950">Gestion operacional</h2>
-                    <p className="mt-2 text-slate-600">
+                    <p className="provi-chip w-fit">ProviEmplea 2026</p>
+                    <h2 className="mt-3 text-3xl font-black text-provi-dark lg:text-4xl">Gestion operacional</h2>
+                    <p className="mt-2 text-provi-muted">
                         {user ? `${user.name} · ${user.email} · ${user.roles.join(', ')}` : 'Sesion admin con Bearer Token'}
                     </p>
                 </div>
@@ -231,11 +231,11 @@ export default function AdminDashboard() {
                 </div>
             </div>
 
-            {message && <div className="mb-4 rounded-2xl bg-emerald-50 p-4 text-sm font-medium text-emerald-800">{message}</div>}
+            {message && <div className="mb-4 rounded-2xl bg-provi-green/10 p-4 text-sm font-bold text-provi-green">{message}</div>}
             <InputError message={error} className="mb-4 rounded-2xl bg-red-50 p-4" />
 
             {loading ? (
-                <div className="rounded-3xl bg-white p-10 text-center text-slate-600">Cargando panel admin...</div>
+                <div className="provi-card p-10 text-center text-provi-muted">Cargando panel admin...</div>
             ) : (
                 <div className="grid gap-6">
                     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
                                 </div>
                                 <Button
                                     type="submit"
-                                    className="bg-teal-700 hover:bg-teal-800"
+                                    className="bg-provi-secondary font-bold hover:bg-provi-secondary/90"
                                     disabled={saving || !selectedRequestId || !note.trim()}
                                 >
                                     {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
@@ -371,7 +371,7 @@ export default function AdminDashboard() {
                                     <MetricCard key={key} label={key} value={value} compact />
                                 ))}
                             </div>
-                            <p className="mt-4 text-sm text-slate-600">
+                            <p className="mt-4 text-sm text-provi-muted">
                                 Los CSV usan autenticacion Bearer en backend; para descarga real desde navegador se recomienda endpoint proxy o signed
                                 URL. La API de exportacion queda documentada y probada en backend.
                             </p>
@@ -444,7 +444,7 @@ export default function AdminDashboard() {
                                     placeholder="Modelo OpenAI"
                                 />
                                 <div className="flex gap-2 md:col-span-3">
-                                    <Button type="submit" className="bg-teal-700 hover:bg-teal-800" disabled={saving}>
+                                    <Button type="submit" className="bg-provi-secondary font-bold hover:bg-provi-secondary/90" disabled={saving}>
                                         Guardar IA
                                     </Button>
                                     <Button type="button" variant="outline" onClick={() => void testAi()} disabled={saving}>
@@ -462,17 +462,17 @@ export default function AdminDashboard() {
 
 function MetricCard({ label, value, compact = false }: { label: string; value: number; compact?: boolean }) {
     return (
-        <div className={`rounded-3xl border border-slate-200 bg-white p-5 shadow-sm ${compact ? 'text-center' : ''}`}>
-            <p className="text-xs font-bold tracking-[0.18em] text-slate-500 uppercase">{label.replaceAll('_', ' ')}</p>
-            <p className="mt-2 text-3xl font-black text-teal-700">{value}</p>
+        <div className={`provi-card p-5 ${compact ? 'text-center' : ''}`}>
+            <p className="text-xs font-bold tracking-[0.18em] text-provi-muted uppercase">{label.replaceAll('_', ' ')}</p>
+            <p className="mt-2 text-4xl font-black text-provi-primary">{value}</p>
         </div>
     );
 }
 
 function AdminCard({ title, children }: { title: string; children: React.ReactNode }) {
     return (
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 className="mb-5 text-2xl font-black text-slate-950">{title}</h3>
+        <section className="provi-card p-6">
+            <h3 className="mb-5 text-2xl font-black text-provi-dark">{title}</h3>
             {children}
         </section>
     );
@@ -480,9 +480,9 @@ function AdminCard({ title, children }: { title: string; children: React.ReactNo
 
 function EntityRow({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
     return (
-        <div className="rounded-2xl bg-slate-50 p-4">
-            <p className="font-bold text-slate-950">{title}</p>
-            <p className="mt-1 text-sm text-slate-600">{subtitle}</p>
+        <div className="rounded-2xl bg-provi-light p-4">
+            <p className="font-bold text-provi-dark">{title}</p>
+            <p className="mt-1 text-sm text-provi-muted">{subtitle}</p>
             <div className="mt-3 flex flex-wrap gap-2">{children}</div>
         </div>
     );
