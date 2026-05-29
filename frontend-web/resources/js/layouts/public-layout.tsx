@@ -1,6 +1,6 @@
 import AccessibilityWidget from '@/components/accessibility-widget';
 import { Link } from '@inertiajs/react';
-import { BriefcaseBusiness, Building2, ShieldCheck, UserRound } from 'lucide-react';
+import { Building2, ShieldCheck, UserRound } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
 
 export default function PublicLayout({ children }: PropsWithChildren) {
@@ -15,8 +15,8 @@ export default function PublicLayout({ children }: PropsWithChildren) {
             <header className="sticky top-0 z-40 border-b border-white/70 bg-white/90 shadow-sm backdrop-blur-xl">
                 <nav className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between" aria-label="Navegacion publica">
                     <Link href="/" className="group flex items-center gap-3 rounded-2xl provi-focus-ring">
-                        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-provi-primary text-white shadow-lg shadow-provi-primary/25 transition group-hover:rotate-3">
-                            <BriefcaseBusiness className="h-6 w-6" />
+                        <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-white p-1 shadow-lg shadow-provi-primary/25 transition group-hover:rotate-3">
+                            <img src="/scraping/iconos/favicon.ico" alt="Icono Providencia" className="h-10 w-10 object-contain" />
                         </span>
                         <span>
                             <span className="block text-lg font-black tracking-tight text-provi-dark">ProviEmplea 2026</span>
@@ -53,6 +53,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                         <p className="mt-3 max-w-xl text-sm leading-7 text-slate-300">
                             Plataforma academica demo inspirada en una experiencia municipal clara, accesible y centrada en personas.
                         </p>
+                        <img src="/scraping/logos/LOGO-129-anos.svg" alt="Logo aniversario Providencia" className="mt-4 h-14 w-auto object-contain opacity-90" />
                     </div>
                     <div>
                         <p className="font-bold text-provi-primary">Accesos</p>

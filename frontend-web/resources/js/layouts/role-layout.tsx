@@ -1,6 +1,6 @@
 import AccessibilityWidget from '@/components/accessibility-widget';
 import { Link } from '@inertiajs/react';
-import { BriefcaseBusiness, Home, ShieldCheck } from 'lucide-react';
+import { BriefcaseBusiness, Building2, Home, ShieldCheck, UserRound } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
 
 type RoleLayoutProps = PropsWithChildren<{ role: 'persona' | 'empresa' | 'admin' | 'superadmin'; title: string }>;
@@ -30,13 +30,16 @@ export default function RoleLayout({ children, role, title }: RoleLayoutProps) {
                             <Home className="h-4 w-4 text-provi-primary" />
                             Inicio
                         </Link>
-                        <Link href="/persona" className="provi-focus-ring rounded-full px-3 py-2 text-provi-dark hover:bg-provi-light">
+                        <Link href="/persona" className="provi-focus-ring inline-flex items-center gap-2 rounded-full px-3 py-2 text-provi-dark hover:bg-provi-light">
+                            <UserRound className="h-4 w-4 text-provi-primary" />
                             Persona
                         </Link>
-                        <Link href="/empresa" className="provi-focus-ring rounded-full px-3 py-2 text-provi-dark hover:bg-provi-light">
+                        <Link href="/empresa" className="provi-focus-ring inline-flex items-center gap-2 rounded-full px-3 py-2 text-provi-dark hover:bg-provi-light">
+                            <Building2 className="h-4 w-4 text-provi-purple" />
                             Empresa
                         </Link>
-                        <Link href="/admin" className="provi-focus-ring rounded-full px-3 py-2 text-provi-dark hover:bg-provi-light">
+                        <Link href="/admin" className="provi-focus-ring inline-flex items-center gap-2 rounded-full px-3 py-2 text-provi-dark hover:bg-provi-light">
+                            <ShieldCheck className="h-4 w-4 text-provi-orange" />
                             Admin
                         </Link>
                         <span className="inline-flex items-center gap-2 rounded-full bg-provi-green/10 px-3 py-2 text-provi-green">

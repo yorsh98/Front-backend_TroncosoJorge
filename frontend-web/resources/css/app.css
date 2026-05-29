@@ -241,24 +241,145 @@
     color: #fff !important;
 }
 
-.proviemplea-a11y-text-sm-1 body {
-    font-size: 15px;
+.proviemplea-a11y-text-sm-1 {
+    font-size: 93.75%;
 }
 
-.proviemplea-a11y-text-sm-2 body {
-    font-size: 14px;
+.proviemplea-a11y-text-sm-2 {
+    font-size: 87.5%;
 }
 
-.proviemplea-a11y-text-lg-1 body {
-    font-size: 18px;
+.proviemplea-a11y-text-lg-1 {
+    font-size: 112.5%;
 }
 
-.proviemplea-a11y-text-lg-2 body {
-    font-size: 20px;
+.proviemplea-a11y-text-lg-2 {
+    font-size: 125%;
 }
 
-.proviemplea-a11y-text-lg-3 body {
-    font-size: 22px;
+.proviemplea-a11y-text-lg-3 {
+    font-size: 137.5%;
+}
+
+.proviemplea-a11y-text-sm-1 body,
+.proviemplea-a11y-text-sm-1 h1,
+.proviemplea-a11y-text-sm-1 h2,
+.proviemplea-a11y-text-sm-1 h3,
+.proviemplea-a11y-text-sm-1 h4,
+.proviemplea-a11y-text-sm-1 h5,
+.proviemplea-a11y-text-sm-1 h6,
+.proviemplea-a11y-text-sm-1 p,
+.proviemplea-a11y-text-sm-1 a,
+.proviemplea-a11y-text-sm-1 button,
+.proviemplea-a11y-text-sm-1 input,
+.proviemplea-a11y-text-sm-1 textarea,
+.proviemplea-a11y-text-sm-1 select,
+.proviemplea-a11y-text-sm-1 label,
+.proviemplea-a11y-text-sm-1 span,
+.proviemplea-a11y-text-sm-1 li,
+.proviemplea-a11y-text-sm-1 td,
+.proviemplea-a11y-text-sm-1 th,
+.proviemplea-a11y-text-sm-1 pre,
+.proviemplea-a11y-text-sm-1 code,
+.proviemplea-a11y-text-sm-2 body,
+.proviemplea-a11y-text-sm-2 h1,
+.proviemplea-a11y-text-sm-2 h2,
+.proviemplea-a11y-text-sm-2 h3,
+.proviemplea-a11y-text-sm-2 h4,
+.proviemplea-a11y-text-sm-2 h5,
+.proviemplea-a11y-text-sm-2 h6,
+.proviemplea-a11y-text-sm-2 p,
+.proviemplea-a11y-text-sm-2 a,
+.proviemplea-a11y-text-sm-2 button,
+.proviemplea-a11y-text-sm-2 input,
+.proviemplea-a11y-text-sm-2 textarea,
+.proviemplea-a11y-text-sm-2 select,
+.proviemplea-a11y-text-sm-2 label,
+.proviemplea-a11y-text-sm-2 span,
+.proviemplea-a11y-text-sm-2 li,
+.proviemplea-a11y-text-sm-2 td,
+.proviemplea-a11y-text-sm-2 th,
+.proviemplea-a11y-text-sm-2 pre,
+.proviemplea-a11y-text-sm-2 code,
+.proviemplea-a11y-text-lg-1 body,
+.proviemplea-a11y-text-lg-1 h1,
+.proviemplea-a11y-text-lg-1 h2,
+.proviemplea-a11y-text-lg-1 h3,
+.proviemplea-a11y-text-lg-1 h4,
+.proviemplea-a11y-text-lg-1 h5,
+.proviemplea-a11y-text-lg-1 h6,
+.proviemplea-a11y-text-lg-1 p,
+.proviemplea-a11y-text-lg-1 a,
+.proviemplea-a11y-text-lg-1 button,
+.proviemplea-a11y-text-lg-1 input,
+.proviemplea-a11y-text-lg-1 textarea,
+.proviemplea-a11y-text-lg-1 select,
+.proviemplea-a11y-text-lg-1 label,
+.proviemplea-a11y-text-lg-1 span,
+.proviemplea-a11y-text-lg-1 li,
+.proviemplea-a11y-text-lg-1 td,
+.proviemplea-a11y-text-lg-1 th,
+.proviemplea-a11y-text-lg-1 pre,
+.proviemplea-a11y-text-lg-1 code,
+.proviemplea-a11y-text-lg-2 body,
+.proviemplea-a11y-text-lg-2 h1,
+.proviemplea-a11y-text-lg-2 h2,
+.proviemplea-a11y-text-lg-2 h3,
+.proviemplea-a11y-text-lg-2 h4,
+.proviemplea-a11y-text-lg-2 h5,
+.proviemplea-a11y-text-lg-2 h6,
+.proviemplea-a11y-text-lg-2 p,
+.proviemplea-a11y-text-lg-2 a,
+.proviemplea-a11y-text-lg-2 button,
+.proviemplea-a11y-text-lg-2 input,
+.proviemplea-a11y-text-lg-2 textarea,
+.proviemplea-a11y-text-lg-2 select,
+.proviemplea-a11y-text-lg-2 label,
+.proviemplea-a11y-text-lg-2 span,
+.proviemplea-a11y-text-lg-2 li,
+.proviemplea-a11y-text-lg-2 td,
+.proviemplea-a11y-text-lg-2 th,
+.proviemplea-a11y-text-lg-2 pre,
+.proviemplea-a11y-text-lg-2 code,
+.proviemplea-a11y-text-lg-3 body,
+.proviemplea-a11y-text-lg-3 h1,
+.proviemplea-a11y-text-lg-3 h2,
+.proviemplea-a11y-text-lg-3 h3,
+.proviemplea-a11y-text-lg-3 h4,
+.proviemplea-a11y-text-lg-3 h5,
+.proviemplea-a11y-text-lg-3 h6,
+.proviemplea-a11y-text-lg-3 p,
+.proviemplea-a11y-text-lg-3 a,
+.proviemplea-a11y-text-lg-3 button,
+.proviemplea-a11y-text-lg-3 input,
+.proviemplea-a11y-text-lg-3 textarea,
+.proviemplea-a11y-text-lg-3 select,
+.proviemplea-a11y-text-lg-3 label,
+.proviemplea-a11y-text-lg-3 span,
+.proviemplea-a11y-text-lg-3 li,
+.proviemplea-a11y-text-lg-3 td,
+.proviemplea-a11y-text-lg-3 th,
+.proviemplea-a11y-text-lg-3 pre,
+.proviemplea-a11y-text-lg-3 code {
+    font-size: 1em !important;
+}
+
+.proviemplea-a11y-text-lg-1 h1,
+.proviemplea-a11y-text-lg-2 h1,
+.proviemplea-a11y-text-lg-3 h1 {
+    font-size: clamp(2.25rem, 5vw, 5.5rem) !important;
+}
+
+.proviemplea-a11y-text-lg-1 h2,
+.proviemplea-a11y-text-lg-2 h2,
+.proviemplea-a11y-text-lg-3 h2 {
+    font-size: clamp(1.75rem, 3.5vw, 3.5rem) !important;
+}
+
+.proviemplea-a11y-text-lg-1 h3,
+.proviemplea-a11y-text-lg-2 h3,
+.proviemplea-a11y-text-lg-3 h3 {
+    font-size: clamp(1.35rem, 2.5vw, 2.25rem) !important;
 }
 
 .proviemplea-a11y-contrast-high body,

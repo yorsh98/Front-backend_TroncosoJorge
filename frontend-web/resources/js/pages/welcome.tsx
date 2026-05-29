@@ -16,9 +16,30 @@ const benefits = [
 ];
 
 const quickAccess = [
-    { href: '/persona', icon: UserRound, title: 'Soy persona', text: 'Completar perfil, cargar CV y solicitar validacion.', color: 'bg-provi-primary' },
-    { href: '/empresa', icon: Building2, title: 'Soy empresa', text: 'Buscar talentos publicados y solicitar contacto.', color: 'bg-provi-purple' },
-    { href: '/admin', icon: FileText, title: 'Gestion municipal', text: 'Validar perfiles, empresas, solicitudes y reportes.', color: 'bg-provi-orange' },
+    {
+        href: '/persona',
+        icon: UserRound,
+        title: 'Soy persona',
+        text: 'Completar perfil, cargar CV y solicitar validacion.',
+        color: 'bg-provi-primary',
+        image: '/scraping/menu/img_menu_vive.jpg',
+    },
+    {
+        href: '/empresa',
+        icon: Building2,
+        title: 'Soy empresa',
+        text: 'Buscar talentos publicados y solicitar contacto.',
+        color: 'bg-provi-purple',
+        image: '/scraping/menu/img_menu_explora.jpg',
+    },
+    {
+        href: '/admin',
+        icon: FileText,
+        title: 'Gestion municipal',
+        text: 'Validar perfiles, empresas, solicitudes y reportes.',
+        color: 'bg-provi-orange',
+        image: '/scraping/menu/img_menu_muni.jpg',
+    },
 ];
 
 export default function Welcome() {
@@ -74,6 +95,11 @@ export default function Welcome() {
                         <div className="rounded-[2rem] bg-white p-6 text-provi-dark shadow-2xl">
                             <p className="provi-chip w-fit">CV ciego demo</p>
                             <h2 className="mt-4 text-3xl font-black">Talento PROV-2026-014</h2>
+                            <img
+                                src="/scraping/fotos/Palacio_Falabella.jpg"
+                                alt="Providencia referencia visual"
+                                className="mt-5 h-40 w-full rounded-2xl object-cover"
+                            />
                             <div className="mt-6 grid gap-3 text-sm">
                                 <span className="rounded-2xl bg-provi-light p-4">Area: Administracion y atencion ciudadana</span>
                                 <span className="rounded-2xl bg-provi-light p-4">Experiencia: 4 anos en soporte administrativo</span>
@@ -90,7 +116,11 @@ export default function Welcome() {
             <section className="mx-auto max-w-7xl px-6 py-10 lg:-mt-10 lg:py-14">
                 <div className="grid gap-4 md:grid-cols-3">
                     {quickAccess.map((item) => (
-                        <Link key={item.title} href={item.href} className="provi-card group block p-6 transition hover:-translate-y-1">
+                        <Link key={item.title} href={item.href} className="provi-card group block overflow-hidden p-0 transition hover:-translate-y-1">
+                            <div className="h-28 w-full overflow-hidden">
+                                <img src={item.image} alt={item.title} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+                            </div>
+                            <div className="p-6">
                             <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.color} text-white shadow-lg`}>
                                 <item.icon className="h-6 w-6" />
                             </span>
@@ -99,6 +129,7 @@ export default function Welcome() {
                             <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-provi-secondary">
                                 Acceder <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
                             </span>
+                            </div>
                         </Link>
                     ))}
                 </div>
