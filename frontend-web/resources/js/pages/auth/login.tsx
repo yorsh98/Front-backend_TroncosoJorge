@@ -39,13 +39,10 @@ export default function Login() {
     };
 
     return (
-        <AuthLayout title="Ingresar a ProviEmplea" description="Usa las credenciales creadas en el backend API">
+        <AuthLayout title="Ingresar a ProviEmplea" description="">
             <Head title="Ingresar" />
 
             <form className="flex flex-col gap-6" onSubmit={submit}>
-                <div className="rounded-2xl border border-provi-primary/20 bg-provi-primary/10 p-4 text-sm font-medium text-provi-dark">
-                    Autenticacion conectada a `POST /api/v1/auth/login` mediante Bearer Token Sanctum.
-                </div>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
                         <Label htmlFor="email">Correo electronico</Label>
@@ -80,7 +77,7 @@ export default function Login() {
 
                     <Button type="submit" className="mt-2 w-full bg-provi-purple font-bold hover:bg-provi-purple/90" tabIndex={3} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        Ingresar con API
+                        Ingresar al sistema
                     </Button>
                 </div>
 

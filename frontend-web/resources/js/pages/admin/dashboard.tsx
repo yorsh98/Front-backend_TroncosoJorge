@@ -52,6 +52,7 @@ const companyStatuses = ['pending_validation', 'active', 'rejected', 'suspended'
 const requestStatuses = ['requested', 'under_review', 'approved', 'rejected', 'contacted', 'interview', 'selected', 'not_selected', 'closed'];
 
 export default function AdminDashboard() {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<AuthUser | null>(null);
     const [metrics, setMetrics] = useState<Metrics>({});
     const [reports, setReports] = useState<Metrics>({});
@@ -95,11 +96,13 @@ export default function AdminDashboard() {
     };
 
     useEffect(() => {
-        if (!tokenStorage.get()) {
-            window.location.href = '/login';
+        const token = tokenStorage.get();
+        if (!token) {
+            setLoading(false);
             return;
         }
 
+        setIsAuthenticated(true);
         setUser(userStorage.get<AuthUser>());
         void loadAdminData();
     }, []);
@@ -234,9 +237,19 @@ export default function AdminDashboard() {
             {message && <div className="mb-4 rounded-2xl bg-provi-green/10 p-4 text-sm font-bold text-provi-green">{message}</div>}
             <InputError message={error} className="mb-4 rounded-2xl bg-red-50 p-4" />
 
-            {loading ? (
+            {!isAuthenticated && (
+                <div className="provi-card mb-6 p-6">
+                    <h3 className="text-2xl font-black text-provi-dark">Vista de demostracion</h3>
+                    <p className="mt-2 text-provi-muted">Para cargar datos de administracion debes iniciar sesion con una cuenta Admin.</p>
+                    <div className="mt-4">
+                        <Button onClick={() => (window.location.href = '/login')}>Ingresar</Button>
+                    </div>
+                </div>
+            )}
+
+            {isAuthenticated && loading ? (
                 <div className="provi-card p-10 text-center text-provi-muted">Cargando panel admin...</div>
-            ) : (
+            ) : isAuthenticated ? (
                 <div className="grid gap-6">
                     <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                         {Object.entries(metrics).map(([key, value]) => (
@@ -455,7 +468,7 @@ export default function AdminDashboard() {
                         </AdminCard>
                     )}
                 </div>
-            )}
+            ) : null}
         </RoleLayout>
     );
 }

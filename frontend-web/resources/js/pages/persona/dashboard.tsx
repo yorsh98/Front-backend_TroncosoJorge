@@ -66,6 +66,7 @@ const emptyProfile = {
 };
 
 export default function PersonaDashboard() {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<AuthUser | null>(null);
     const [profile, setProfile] = useState<PersonProfile | null>(null);
     const [completion, setCompletion] = useState<Completion | null>(null);
@@ -118,11 +119,13 @@ export default function PersonaDashboard() {
     };
 
     useEffect(() => {
-        if (!tokenStorage.get()) {
-            window.location.href = '/login';
+        const token = tokenStorage.get();
+        if (!token) {
+            setLoading(false);
             return;
         }
 
+        setIsAuthenticated(true);
         setUser(userStorage.get<AuthUser>());
         void loadPersonaData();
     }, []);
@@ -265,9 +268,19 @@ export default function PersonaDashboard() {
             {message && <div className="mb-4 rounded-2xl bg-provi-green/10 p-4 text-sm font-bold text-provi-green">{message}</div>}
             <InputError message={error} className="mb-4 rounded-2xl bg-red-50 p-4" />
 
-            {loading ? (
+            {!isAuthenticated && (
+                <div className="provi-card mb-6 p-6">
+                    <h3 className="text-2xl font-black text-provi-dark">Vista de demostracion</h3>
+                    <p className="mt-2 text-provi-muted">Para cargar tu informacion personal debes iniciar sesion con una cuenta Persona.</p>
+                    <div className="mt-4">
+                        <Button onClick={() => (window.location.href = '/login')}>Ingresar</Button>
+                    </div>
+                </div>
+            )}
+
+            {isAuthenticated && loading ? (
                 <div className="provi-card p-10 text-center text-provi-muted">Cargando informacion persona...</div>
-            ) : (
+            ) : isAuthenticated ? (
                 <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
                     <section className="provi-card p-6">
                         <div className="mb-6 flex items-center justify-between gap-4">
@@ -459,7 +472,7 @@ export default function PersonaDashboard() {
                         </section>
                     </aside>
                 </div>
-            )}
+            ) : null}
         </RoleLayout>
     );
 }
