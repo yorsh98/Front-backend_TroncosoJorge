@@ -32,6 +32,7 @@ La arquitectura separa responsabilidades:
 
 - `backend-api`: API REST Laravel versionada bajo `/api/v1`, autenticacion Bearer Token con Sanctum, MySQL, colas por base de datos, Swagger/OpenAPI, health checks, analisis de CV y reglas de privacidad.
 - `frontend-web`: Laravel React Starter Kit con React, TypeScript, Inertia, Tailwind CSS y Vite. Se ejecuta localmente con `php artisan serve` y `npm run dev`.
+- `frontend-web/resources/js/services`: servicios TypeScript para consumir la API backend con Bearer Token.
 - `docker`: infraestructura del backend con PHP-FPM, Nginx, MySQL, Mailpit, worker, scheduler y LibreOffice.
 - `scripts`: automatizacion de setup, arranque, migraciones, seeders y ZIP final.
 - `docs`: documentacion tecnica, funcional y de evaluacion para profesores.
@@ -72,6 +73,11 @@ URLs esperadas:
 - Backend API: `http://localhost:8088/api/health`
 - Swagger: `http://localhost:8088/api/documentation`
 - Frontend: `http://127.0.0.1:8000`
+- Frontend rutas Sprint 11: `/`, `/login`, `/register`, `/persona`, `/empresa`, `/admin`
+- Panel persona Sprint 12: `/persona` con perfil, completitud, carga CV, analisis, CV ciego y solicitud de validacion.
+- Panel empresa Sprint 13: `/empresa` con perfil empresa, vitrina de talentos, detalle CV ciego y solicitud de contacto intermediada.
+- Panel admin Sprint 14: `/admin` con metricas, talentos, empresas, solicitudes, notas, reportes e IA.
+- Sprint 15: navegacion transversal, widget de accesibilidad, manejo comun de errores API y guia demo frontend.
 
 Credencial inicial:
 
@@ -79,6 +85,13 @@ Credencial inicial:
 - Password: `password`
 
 Modo IA por defecto: `regex`.
+
+Variables frontend principales:
+
+- `BACKEND_API_URL=http://localhost:8088/api`
+- `BACKEND_API_VERSION=v1`
+- `VITE_BACKEND_API_URL=${BACKEND_API_URL}`
+- `VITE_BACKEND_API_VERSION=${BACKEND_API_VERSION}`
 
 ## Revision Profesor Backend
 
@@ -104,6 +117,7 @@ El profesor de frontend debe revisar:
 - Laravel React Starter Kit.
 - React, TypeScript, Inertia, Tailwind CSS y Vite.
 - Landing publica, login y registros.
+- Login y registro consumiendo backend API con Bearer Token.
 - Panel persona con modal de consentimiento y CV ciego.
 - Panel empresa con vitrina de talentos.
 - Panel admin/superadmin con configuracion IA.
@@ -111,6 +125,8 @@ El profesor de frontend debe revisar:
 - Consumo de API con Bearer Token.
 
 Guia detallada: `docs/04-guia-profesor-frontend.md`.
+
+QA final y entrega: `docs/17-qa-final-entrega.md`.
 
 ## Separacion En Repositorios Propios
 
@@ -131,6 +147,8 @@ bash scripts/build-zip.sh
 ```
 
 Debe crear `ProviEmplea_2026_Evaluacion.zip` excluyendo dependencias, logs, `.env`, archivos temporales, CV reales y datos personales sensibles.
+
+El script `scripts/build-zip.sh` fue validado y conserva `.env.example` para instalacion demo.
 
 ## Checklist Final
 

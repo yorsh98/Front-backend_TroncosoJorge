@@ -12,6 +12,16 @@ ProviEmplea 2026 debe tratar los CV como documentos privados y sensibles.
 - Antes de subir un CV, el frontend muestra consentimiento obligatorio.
 - Las acciones relevantes quedan auditadas sin volcar datos personales completos en logs.
 
+## Carga De CV Sprint 5
+
+- Endpoint exige `consent_accepted`.
+- Se aceptan extensiones `pdf`, `docx` y `doc`.
+- Tamano maximo por defecto: 15 MB.
+- Los CV se almacenan en `storage/app/private/cv` mediante disk `private`.
+- No se expone URL publica del archivo.
+- Logs tecnicos no incluyen contenido completo del CV.
+- Empresas no consumen `cv_uploads`; solo deben acceder a `blind_cv_profiles` en sprints posteriores.
+
 ## Auditoria Prevista
 
 - Login.

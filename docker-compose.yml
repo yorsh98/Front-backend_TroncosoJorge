@@ -55,7 +55,7 @@ services:
       dockerfile: docker/backend/Dockerfile
     container_name: proviemplea_queue_worker
     working_dir: /var/www/html
-    command: php artisan queue:work database --sleep=3 --tries=3 --timeout=120
+    command: php artisan queue:work database --queue=default,cv-analysis --sleep=3 --tries=3 --timeout=180
     volumes:
       - ./backend-api:/var/www/html
     depends_on:

@@ -1,0 +1,1261 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "ProviEmplea 2026 API",
+        "description": "API REST para plataforma de intermediacion laboral inversa con CV ciego, Sanctum Bearer Tokens, MySQL, health checks, analisis CV regex/IA y administracion municipal.",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health general",
+                "operationId": "ca73d37cd8bdf0d445a8ec592edec8a8",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/health/db": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health MySQL",
+                "operationId": "3298c98d6c8e0d3376689c2a32897981",
+                "responses": {
+                    "200": {
+                        "description": "DB OK"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/health/storage": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health storage privado",
+                "operationId": "14ce67b1af1b26e4cb0115d2dc3ff891",
+                "responses": {
+                    "200": {
+                        "description": "Storage OK"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/health/queue": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health database queue",
+                "operationId": "2cea1c5c9de04f4befd9c00af9d299b1",
+                "responses": {
+                    "200": {
+                        "description": "Queue OK"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/health/ai": {
+            "get": {
+                "tags": [
+                    "Health",
+                    "IA"
+                ],
+                "summary": "Health IA",
+                "operationId": "8e5cdcf6ad85a60cc7f2774d42f16660",
+                "responses": {
+                    "200": {
+                        "description": "IA OK"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login Bearer Token",
+                "operationId": "02280590a6cef5d3eccea8395777867c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "admin@proviemplea.local"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Token"
+                    },
+                    "422": {
+                        "description": "Credenciales invalidas"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/register/persona": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registro persona",
+                "operationId": "16fcbf1c9f115889d197ac83e586904c",
+                "responses": {
+                    "201": {
+                        "description": "Persona creada"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/register/empresa": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registro empresa",
+                "operationId": "1981b15f608f29b5640a0e03913c3098",
+                "responses": {
+                    "201": {
+                        "description": "Empresa creada"
+                    }
+                },
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Usuario autenticado",
+                "operationId": "b42da6d88ee14d2b21a8148596ebc2a9",
+                "responses": {
+                    "200": {
+                        "description": "Usuario"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout",
+                "operationId": "1685f807ef5fdeb20f8e71086f1c8028",
+                "responses": {
+                    "200": {
+                        "description": "Logout OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/profile": {
+            "get": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Ver perfil persona",
+                "operationId": "185d75281ad8327c4aba1b080ba0ec85",
+                "responses": {
+                    "200": {
+                        "description": "Perfil"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Actualizar perfil persona",
+                "operationId": "4fa722ff02bc7b1fda044aba77585b43",
+                "responses": {
+                    "200": {
+                        "description": "Perfil actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/profile/completion": {
+            "get": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Completitud perfil",
+                "operationId": "bb6641595521b0d99407696c35019670",
+                "responses": {
+                    "200": {
+                        "description": "Completitud"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/cv/upload": {
+            "post": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Subir CV PDF/DOCX/DOC",
+                "operationId": "54f3ee86d5bcd23cf82cb1fcd2c28494",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "cv",
+                                    "consent_accepted"
+                                ],
+                                "properties": {
+                                    "cv": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "consent_accepted": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "CV encolado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/cv/uploads": {
+            "get": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Listar CV subidos",
+                "operationId": "926ddb42080554a4b9dede471ecf0603",
+                "responses": {
+                    "200": {
+                        "description": "Uploads"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/cv/analysis/{id}": {
+            "get": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Resultado analisis CV",
+                "operationId": "3fe3d61669f3ab74feb482ecea199a4e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Analisis"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/cv/analysis/{id}/apply-to-profile": {
+            "post": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Aplicar analisis al perfil",
+                "operationId": "a351ee0126ac9063864f1112e9823205",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Aplicado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/educations": {
+            "get": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Listar educacion",
+                "operationId": "7c6be032b3a5c3f8b80886329f8443d7",
+                "responses": {
+                    "200": {
+                        "description": "Educaciones"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Crear educacion",
+                "operationId": "8aa611819f603fbae2d30339890defcd",
+                "responses": {
+                    "201": {
+                        "description": "Creada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/experiences": {
+            "get": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Listar experiencias",
+                "operationId": "053c61a9e31d9151e295a8c419ee3b15",
+                "responses": {
+                    "200": {
+                        "description": "Experiencias"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Crear experiencia",
+                "operationId": "e403088dc2b808462a6e804bcc004b3e",
+                "responses": {
+                    "201": {
+                        "description": "Creada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/skills": {
+            "get": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Listar competencias",
+                "operationId": "8d512b919f8f16ed6486779f355f8a65",
+                "responses": {
+                    "200": {
+                        "description": "Skills"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Crear competencia",
+                "operationId": "5810b1533d07279611fd57d812e97bd2",
+                "responses": {
+                    "201": {
+                        "description": "Creada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/blind-cv/preview": {
+            "get": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Preview CV ciego",
+                "operationId": "f7e32128899348d64e0c7e4224cd6489",
+                "responses": {
+                    "200": {
+                        "description": "CV ciego"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/persona/request-validation": {
+            "post": {
+                "tags": [
+                    "Persona"
+                ],
+                "summary": "Solicitar validacion",
+                "operationId": "1964729e4286fa42709bd862165eb542",
+                "responses": {
+                    "200": {
+                        "description": "Solicitud enviada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/empresa/profile": {
+            "get": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Ver perfil empresa",
+                "operationId": "a7fc225b87ec3d8b920374ba9fcb5fb9",
+                "responses": {
+                    "200": {
+                        "description": "Perfil empresa"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Actualizar perfil empresa",
+                "operationId": "18d6b45436003b51ebbe4312187fd641",
+                "responses": {
+                    "200": {
+                        "description": "Perfil actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/empresa/talentos": {
+            "get": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Vitrina de talentos CV ciego",
+                "operationId": "40f02d4617b182a3cbe4e12eaf8b2f1c",
+                "parameters": [
+                    {
+                        "name": "skill",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "language",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "modality",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Talentos"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/empresa/talentos/{blindCvCode}": {
+            "get": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Detalle CV ciego",
+                "operationId": "43dee2c42d81c876d74e3e1f321fadae",
+                "parameters": [
+                    {
+                        "name": "blindCvCode",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CV ciego"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/empresa/talentos/{blindCvCode}/request-contact": {
+            "post": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Solicitar contacto intermediado",
+                "operationId": "9be134ef2ceab6e8dc7faf48fcd8f590",
+                "parameters": [
+                    {
+                        "name": "blindCvCode",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Solicitud creada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/empresa/contact-requests": {
+            "get": {
+                "tags": [
+                    "Empresa"
+                ],
+                "summary": "Historial solicitudes empresa",
+                "operationId": "dedfb2c02af32d29d8017fa84ff3b764",
+                "responses": {
+                    "200": {
+                        "description": "Solicitudes"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/dashboard": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Dashboard admin",
+                "operationId": "ec38eae707ab30b77298bba91d305b79",
+                "responses": {
+                    "200": {
+                        "description": "Metricas"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/personas": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Listar personas",
+                "operationId": "37188a8955a99284a3c407713f45d66b",
+                "responses": {
+                    "200": {
+                        "description": "Personas"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/personas/{id}/status": {
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Cambiar estado talento",
+                "operationId": "d0dcf5ab74c59f993f874082225ce9c9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/empresas": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Listar empresas",
+                "operationId": "aaf1e284921437ec2c7a727a85acb08a",
+                "responses": {
+                    "200": {
+                        "description": "Empresas"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/empresas/{id}/status": {
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Cambiar estado empresa",
+                "operationId": "af5ba429ff8940a902ad6c9a0cdbbb79",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/contact-requests": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Listar solicitudes contacto",
+                "operationId": "3d1333c577b367e50e818b8eb4164c7f",
+                "responses": {
+                    "200": {
+                        "description": "Solicitudes"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/contact-requests/{id}/status": {
+            "put": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Cambiar estado solicitud",
+                "operationId": "f62f590a6d9bd2f9b7dcc9b1b02d8349",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/contact-requests/{id}/notes": {
+            "post": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Agregar nota interna",
+                "operationId": "0a89a4ed4ad3a87f5748cc3a7f64e89a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Nota agregada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/reports/summary": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Reporte resumen",
+                "operationId": "a96b0e6b4bbd98201a1950f8d4fc45e2",
+                "responses": {
+                    "200": {
+                        "description": "Resumen"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/reports/export": {
+            "get": {
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Export CSV",
+                "operationId": "41e0ee94a4dec8107f1b4a35091277df",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "talentos",
+                                "empresas",
+                                "solicitudes"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CSV"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/settings/ai": {
+            "get": {
+                "tags": [
+                    "IA"
+                ],
+                "summary": "Ver configuracion IA",
+                "operationId": "65925eb70cdd80131e0d0b281d1a42d6",
+                "responses": {
+                    "200": {
+                        "description": "Configuracion"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "IA"
+                ],
+                "summary": "Actualizar configuracion IA",
+                "operationId": "d10bdd61747f2790eb2d1552cf0695f4",
+                "responses": {
+                    "200": {
+                        "description": "Actualizada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/settings/ai/test-connection": {
+            "post": {
+                "tags": [
+                    "IA"
+                ],
+                "summary": "Probar conexion IA",
+                "operationId": "7e0f13e193586ce5a8dd2adccbd50b58",
+                "responses": {
+                    "200": {
+                        "description": "Resultado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "servers": [
+                    {
+                        "url": "http://localhost:8088",
+                        "description": "Backend local Docker"
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "SANCTUM",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Health",
+            "description": "Health"
+        },
+        {
+            "name": "IA",
+            "description": "IA"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Persona",
+            "description": "Persona"
+        },
+        {
+            "name": "Empresa",
+            "description": "Empresa"
+        },
+        {
+            "name": "Admin",
+            "description": "Admin"
+        }
+    ]
+}

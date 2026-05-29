@@ -31,3 +31,37 @@ php artisan serve
 
 - Email: `admin@proviemplea.local`
 - Password: `password`
+
+## Credenciales Por Rol
+
+- Superadmin: `admin@proviemplea.local` / `password`.
+- Persona: `persona.demo@proviemplea.local` / `password123`.
+- Empresa: `contacto.empresa.demo@proviemplea.local` / `password123`.
+
+## Validacion Rapida
+
+Backend:
+
+```bash
+curl http://localhost:8088/api/health
+curl http://localhost:8088/docs
+docker compose exec app php artisan test
+```
+
+Frontend:
+
+```bash
+cd proviemplea-evaluacion/frontend-web
+npm run build
+npm run format:check
+php artisan route:list
+```
+
+ZIP:
+
+```bash
+cd proviemplea-evaluacion
+bash scripts/build-zip.sh
+```
+
+Debe generar `ProviEmplea_2026_Evaluacion.zip` sin `.env`, sin `.git`, sin `vendor/`, sin `node_modules/` y sin storage privado.

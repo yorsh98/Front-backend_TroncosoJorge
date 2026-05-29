@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\Settings\SystemSettingsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -11,6 +12,10 @@ use Throwable;
 
 class HealthController extends Controller
 {
+    public function __construct(private readonly SystemSettingsService $settings)
+    {
+    }
+
     public function index(): JsonResponse
     {
         return response()->json([
@@ -79,13 +84,16 @@ class HealthController extends Controller
 
     public function ai(): JsonResponse
     {
-        $mode = config('services.cv_analysis.mode', 'regex');
-        $provider = config('services.cv_analysis.provider', 'none');
+        $settings = $this->settings->aiSettings();
+        $mode = $settings['cv_analysis_mode'];
+        $provider = $settings['ai_provider'];
 
         return response()->json([
             'status' => 'ok',
             'mode' => $mode,
             'provider' => $provider,
+            'failover_to_regex' => $settings['ai_failover_to_regex'],
+            'openai_api_key_configured' => $settings['openai_api_key_configured'],
             'external_connection_required' => $mode !== 'regex',
             'message' => $mode === 'regex'
                 ? 'Regex mode does not require external AI services.'

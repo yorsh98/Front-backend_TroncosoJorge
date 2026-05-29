@@ -11,4 +11,5 @@ fi
 docker compose build app queue-worker scheduler
 docker compose run --rm app composer install
 docker compose run --rm app php artisan key:generate --force
-docker compose run --rm app sh -c "chown -R www-data:www-data storage bootstrap/cache && chmod -R ug+rwX storage bootstrap/cache"
+docker compose run --rm app php artisan l5-swagger:generate
+docker compose run --rm app sh -c "chmod -R 777 storage bootstrap/cache"

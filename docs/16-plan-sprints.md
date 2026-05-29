@@ -16,10 +16,20 @@
 - Sprint 13: Frontend empresa y vitrina de talentos.
 - Sprint 14: Frontend admin y superusuario.
 - Sprint 15: Accesibilidad universal.
-- Sprint 16: Seguridad, privacidad, auditoria y datos reales.
-- Sprint 17: Reportes y exportacion Excel.
-- Sprint 18: Tests, seeders y datos demo.
-- Sprint 19: Documentacion final para profesores.
-- Sprint 20: ZIP final y validacion general.
+- Sprint 16: QA final, validacion general, ZIP y cierre de entrega.
+- Sprint 17: Mejoras futuras: Excel real, proxy de descargas y hardening productivo.
+- Sprint 18: Mejoras futuras: tests funcionales extendidos y E2E.
+- Sprint 19: Mejoras futuras: despliegue productivo separado.
+- Sprint 20: Reservado para ajustes solicitados por profesor.
 
 Cada sprint debe crear o modificar archivos reales, ejecutar comandos cuando el entorno lo permita, corregir errores y documentar resultados antes de avanzar.
+
+## Estado Final Ejecutado
+
+- Backend API dockerizado: completado.
+- Frontend React/Inertia: completado.
+- Swagger/OpenAPI: completado.
+- Health checks: completado.
+- Flujos persona/empresa/admin: completados.
+- Accesibilidad base: completada.
+- ZIP final: completado.
