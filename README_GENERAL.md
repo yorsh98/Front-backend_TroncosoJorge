@@ -167,3 +167,10 @@ El script `scripts/build-zip.sh` fue validado y conserva `.env.example` para ins
 - Empresa no ve datos personales.
 - Superadmin puede cambiar IA.
 - Documentacion lista.
+
+
+## Credenciales
+
+- Admin: admin@proviemplea.local / password
+- Persona: persona.demo@proviemplea.local / password123
+- Empresa: contacto.empresa.demo@proviemplea.local / password123
