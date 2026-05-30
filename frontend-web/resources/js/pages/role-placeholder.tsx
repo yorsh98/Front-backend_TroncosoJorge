@@ -15,11 +15,11 @@ export default function RolePlaceholder({ role, title }: RolePlaceholderProps) {
         <RoleLayout role={role} title={title}>
             <Head title={title} />
             <section className="rounded-3xl border border-teal-100 bg-white p-8 shadow-sm">
-                <p className="text-sm font-bold tracking-[0.25em] text-teal-700 uppercase">Sprint 11</p>
-                <h2 className="mt-3 text-3xl font-black text-slate-950">Acceso API validado</h2>
+                <p className="text-sm font-bold tracking-[0.25em] text-teal-700 uppercase">Municipalidad de Providencia</p>
+                <h2 className="mt-3 text-3xl font-black text-slate-950">Portal institucional</h2>
                 <p className="mt-4 max-w-3xl leading-8 text-slate-600">
-                    El login/registro ya consume el backend API y conserva el Bearer Token para los paneles que se construiran en los siguientes
-                    sprints.
+                    Este espacio reune accesos y funcionalidades para la gestion coordinada entre personas, empresas y administracion del
+                    Departamento de Empleo.
                 </p>
                 {user && (
                     <div className="mt-6 rounded-2xl bg-slate-50 p-5 text-sm text-slate-700">

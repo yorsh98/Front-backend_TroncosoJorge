@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import RoleLayout from '@/layouts/role-layout';
 import { adminService } from '@/services/adminService';
 import { apiErrorMessage, tokenStorage, userStorage } from '@/services/apiClient';
-import { authService, type AuthUser } from '@/services/authService';
+import { type AuthUser } from '@/services/authService';
 import { settingsService } from '@/services/settingsService';
 import { Head } from '@inertiajs/react';
 import { LoaderCircle, RefreshCw } from 'lucide-react';
@@ -207,11 +207,6 @@ export default function AdminDashboard() {
         window.open(`${adminService.exportUrl(type)}&token_hint=${token ? 'bearer-required' : 'missing'}`, '_blank');
     };
 
-    const logout = async () => {
-        await authService.logout();
-        window.location.href = '/';
-    };
-
     return (
         <RoleLayout role="admin" title="Panel Administracion">
             <Head title="Panel Admin" />
@@ -220,16 +215,11 @@ export default function AdminDashboard() {
                 <div>
                     <p className="provi-chip w-fit">ProviEmplea 2026</p>
                     <h2 className="mt-3 text-3xl font-black text-provi-dark lg:text-4xl">Gestion operacional</h2>
-                    <p className="mt-2 text-provi-muted">
-                        {user ? `${user.name} · ${user.email} · ${user.roles.join(', ')}` : 'Sesion admin con Bearer Token'}
-                    </p>
+                    <p className="mt-2 text-provi-muted">{user ? `${user.name} · ${user.email} · ${user.roles.join(', ')}` : 'Portal de administracion municipal'}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={() => void loadAdminData()} disabled={loading}>
                         <RefreshCw className="h-4 w-4" /> Refrescar
-                    </Button>
-                    <Button variant="outline" onClick={() => void logout()}>
-                        Salir
                     </Button>
                 </div>
             </div>
@@ -239,7 +229,7 @@ export default function AdminDashboard() {
 
             {!isAuthenticated && (
                 <div className="provi-card mb-6 p-6">
-                    <h3 className="text-2xl font-black text-provi-dark">Vista de demostracion</h3>
+                    <h3 className="text-2xl font-black text-provi-dark">Acceso para administracion autorizada</h3>
                     <p className="mt-2 text-provi-muted">Para cargar datos de administracion debes iniciar sesion con una cuenta Admin.</p>
                     <div className="mt-4">
                         <Button onClick={() => (window.location.href = '/login')}>Ingresar</Button>
@@ -385,8 +375,7 @@ export default function AdminDashboard() {
                                 ))}
                             </div>
                             <p className="mt-4 text-sm text-provi-muted">
-                                Los CSV usan autenticacion Bearer en backend; para descarga real desde navegador se recomienda endpoint proxy o signed
-                                URL. La API de exportacion queda documentada y probada en backend.
+                                Exporta reportes de gestion para seguimiento institucional y coordinacion operativa del Departamento de Empleo.
                             </p>
                             <div className="mt-4 flex flex-wrap gap-2">
                                 <Button variant="outline" onClick={() => downloadExport('talentos')}>

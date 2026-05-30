@@ -38,7 +38,7 @@ export default function Register() {
             await authService.registerEmpresa(payload);
             window.location.href = '/empresa';
         } catch (caught) {
-            setError(apiErrorMessage(caught, 'No fue posible registrar la cuenta en la API backend.'));
+            setError(apiErrorMessage(caught, 'No fue posible completar el registro.'));
         } finally {
             setProcessing(false);
             setPassword('');

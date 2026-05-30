@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import RoleLayout from '@/layouts/role-layout';
 import { apiErrorMessage, tokenStorage, userStorage } from '@/services/apiClient';
-import { authService, type AuthUser } from '@/services/authService';
+import { type AuthUser } from '@/services/authService';
 import { companyService } from '@/services/companyService';
 import { Head } from '@inertiajs/react';
 import { LoaderCircle, RefreshCw, Search } from 'lucide-react';
@@ -208,11 +208,6 @@ export default function EmpresaDashboard() {
         }
     };
 
-    const logout = async () => {
-        await authService.logout();
-        window.location.href = '/';
-    };
-
     return (
         <RoleLayout role="empresa" title="Panel Empresa">
             <Head title="Panel Empresa" />
@@ -221,14 +216,11 @@ export default function EmpresaDashboard() {
                 <div>
                     <p className="provi-chip w-fit">ProviEmplea 2026</p>
                     <h2 className="mt-3 text-3xl font-black text-provi-dark lg:text-4xl">Vitrina de talentos con CV ciego</h2>
-                    <p className="mt-2 text-provi-muted">{user ? `${user.name} · ${user.email}` : 'Sesion empresa con Bearer Token'}</p>
+                    <p className="mt-2 text-provi-muted">{user ? `${user.name} · ${user.email}` : 'Portal empresas municipal'}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={() => void searchTalents()} disabled={searching}>
                         <RefreshCw className="h-4 w-4" /> Talentos
-                    </Button>
-                    <Button variant="outline" onClick={() => void logout()}>
-                        Salir
                     </Button>
                 </div>
             </div>
@@ -238,7 +230,7 @@ export default function EmpresaDashboard() {
 
             {!isAuthenticated && (
                 <div className="provi-card mb-6 p-6">
-                    <h3 className="text-2xl font-black text-provi-dark">Vista de demostracion</h3>
+                    <h3 className="text-2xl font-black text-provi-dark">Acceso para empresas registradas</h3>
                     <p className="mt-2 text-provi-muted">Para cargar la informacion de empresa y usar la vitrina, inicia sesion con una cuenta Empresa.</p>
                     <div className="mt-4">
                         <Button onClick={() => (window.location.href = '/login')}>Ingresar</Button>

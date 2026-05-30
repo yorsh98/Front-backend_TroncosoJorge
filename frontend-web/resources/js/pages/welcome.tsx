@@ -82,8 +82,8 @@ export default function Welcome() {
                                 <p className="mt-1 text-xs text-slate-300">ciego</p>
                             </div>
                             <div className="rounded-3xl bg-white/10 p-4 backdrop-blur">
-                                <p className="text-2xl font-black text-provi-yellow">API</p>
-                                <p className="mt-1 text-xs text-slate-300">Sanctum</p>
+                                <p className="text-2xl font-black text-provi-yellow">Red</p>
+                                <p className="mt-1 text-xs text-slate-300">empresas</p>
                             </div>
                             <div className="rounded-3xl bg-white/10 p-4 backdrop-blur">
                                 <p className="text-2xl font-black text-provi-green">IA</p>
@@ -93,7 +93,7 @@ export default function Welcome() {
                     </div>
                     <div className="rounded-[2.5rem] border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-xl lg:p-6">
                         <div className="rounded-[2rem] bg-white p-6 text-provi-dark shadow-2xl">
-                            <p className="provi-chip w-fit">CV ciego demo</p>
+                            <p className="provi-chip w-fit">CV ciego municipal</p>
                             <h2 className="mt-4 text-3xl font-black">Talento PROV-2026-014</h2>
                             <img
                                 src="/scraping/fotos/Palacio_Falabella.jpg"
@@ -167,10 +167,10 @@ export default function Welcome() {
             <section className="mx-auto max-w-7xl px-6 py-16">
                 <div className="relative overflow-hidden rounded-[2.5rem] bg-provi-dark p-8 text-white shadow-2xl lg:p-12">
                     <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-provi-primary/30 blur-3xl" />
-                    <h2 className="relative text-3xl font-black lg:text-5xl">Accesible, documentado y listo para evaluacion</h2>
+                    <h2 className="relative text-3xl font-black lg:text-5xl">Accesible, confiable y centrado en las personas</h2>
                     <p className="mt-4 max-w-3xl leading-8 text-slate-200">
-                        La entrega separa backend dockerizado y frontend local, consume API versionada con Bearer Token y mantiene el modo de analisis
-                        regex activo por defecto para facilitar la revision docente.
+                        ProviEmplea fortalece la intermediacion laboral local con procesos claros, acompanamiento institucional y resguardo de datos
+                        personales durante todo el ciclo de vinculacion laboral.
                     </p>
                 </div>
             </section>

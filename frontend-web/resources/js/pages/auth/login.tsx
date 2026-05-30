@@ -31,7 +31,7 @@ export default function Login() {
             const response = await authService.login(email, password);
             window.location.href = routeByRole(response.user.roles);
         } catch (caught) {
-            setError(apiErrorMessage(caught, 'No fue posible iniciar sesion con la API backend.'));
+            setError(apiErrorMessage(caught, 'No fue posible iniciar sesion.'));
         } finally {
             setProcessing(false);
             setPassword('');

@@ -51,7 +51,8 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                     <div>
                         <p className="text-2xl font-black">ProviEmplea 2026</p>
                         <p className="mt-3 max-w-xl text-sm leading-7 text-slate-300">
-                            Plataforma academica demo inspirada en una experiencia municipal clara, accesible y centrada en personas.
+                            Plataforma municipal de intermediacion laboral con enfoque en empleabilidad local, privacidad de datos y acompanamiento
+                            institucional.
                         </p>
                         <img src="/scraping/logos/LOGO-129-anos.svg" alt="Logo aniversario Providencia" className="mt-4 h-14 w-auto object-contain opacity-90" />
                     </div>
