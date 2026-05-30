@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\Persona\EducationController;
 use App\Http\Controllers\Api\V1\Persona\ExperienceController;
 use App\Http\Controllers\Api\V1\Persona\ProfileController;
 use App\Http\Controllers\Api\V1\Persona\SkillController;
+use App\Http\Controllers\Api\V1\PublicStatsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('health')->group(function (): void {
@@ -30,6 +31,7 @@ Route::prefix('v1')->group(function (): void {
         'status' => 'ok',
         'message' => 'ProviEmplea 2026 API v1',
     ]));
+    Route::get('/public/stats', PublicStatsController::class);
 
     Route::prefix('auth')->group(function (): void {
         Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:auth.login');

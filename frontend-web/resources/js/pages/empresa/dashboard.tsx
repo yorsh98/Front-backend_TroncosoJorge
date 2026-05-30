@@ -185,7 +185,7 @@ export default function EmpresaDashboard() {
             setSelectedTalent(response.data);
             setRequestForm({ position_offered: '', message: '' });
         } catch (caught) {
-            setError(apiErrorMessage(caught, 'No fue posible cargar el CV ciego.'));
+            setError(apiErrorMessage(caught, 'No fue posible cargar el CV protegido.'));
         }
     };
 
@@ -215,7 +215,7 @@ export default function EmpresaDashboard() {
             <div className="provi-card mb-6 flex flex-col gap-4 p-6 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                     <p className="provi-chip w-fit">ProviEmplea 2026</p>
-                    <h2 className="mt-3 text-3xl font-black text-provi-dark lg:text-4xl">Vitrina de talentos con CV ciego</h2>
+                    <h2 className="mt-3 text-3xl font-black text-provi-dark lg:text-4xl">Vitrina de talentos con CV protegido</h2>
                     <p className="mt-2 text-provi-muted">{user ? `${user.name} · ${user.email}` : 'Portal empresas municipal'}</p>
                 </div>
                 <div className="flex gap-2">
@@ -394,7 +394,7 @@ export default function EmpresaDashboard() {
                                                 ))}
                                         </div>
                                         <Button className="mt-4" variant="outline" onClick={() => void loadTalentDetail(talent.blind_cv_code)}>
-                                            Ver CV ciego
+                                            Ver CV protegido
                                         </Button>
                                     </article>
                                 ))}
@@ -405,7 +405,7 @@ export default function EmpresaDashboard() {
                             <section className="provi-card p-6">
                                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                                     <div>
-                                        <p className="provi-chip w-fit">CV ciego</p>
+                                        <p className="provi-chip w-fit">CV protegido</p>
                                         <h3 className="mt-3 text-2xl font-black text-provi-dark">{selectedTalent.blind_cv_code}</h3>
                                         <p className="mt-3 max-w-3xl leading-7 text-provi-muted">{selectedTalent.summary}</p>
                                     </div>

@@ -401,7 +401,7 @@ export default function PersonaDashboard() {
                                 <Input type="file" accept=".pdf,.doc,.docx" onChange={(event) => setCvFile(event.target.files?.[0] ?? null)} />
                                 <label className="flex gap-3 rounded-2xl bg-provi-primary/10 p-4 text-sm font-medium text-provi-dark">
                                     <input type="checkbox" checked={consentAccepted} onChange={(event) => setConsentAccepted(event.target.checked)} />
-                                    Acepto que mi CV sea procesado para generar perfil laboral y CV ciego. Mis datos personales no seran visibles para
+                                    Acepto que mi CV sea procesado para generar perfil laboral y CV protegido. Mis datos personales no seran visibles para
                                     empresas.
                                 </label>
                                 <Button type="submit" className="bg-provi-purple font-bold hover:bg-provi-purple/90" disabled={uploading || !consentAccepted}>
@@ -451,7 +451,7 @@ export default function PersonaDashboard() {
                         <section className="provi-card p-6">
                             <div className="flex items-center justify-between gap-4">
                                 <div>
-                                    <h3 className="text-xl font-black text-provi-dark">CV ciego</h3>
+                                    <h3 className="text-xl font-black text-provi-dark">CV protegido</h3>
                                     <p className="text-sm text-provi-muted">Preview sin datos personales directos.</p>
                                 </div>
                                 <Button variant="outline" onClick={() => void requestValidation()}>

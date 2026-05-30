@@ -1,10 +1,12 @@
 import PublicLayout from '@/layouts/public-layout';
+import { publicService } from '@/services/publicService';
 import { Head, Link } from '@inertiajs/react';
 import { ArrowRight, BadgeCheck, Building2, FileText, LockKeyhole, Search, Sparkles, UserRound } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const steps = [
     'Personas crean su perfil y cargan CV con consentimiento.',
-    'La plataforma genera un CV ciego sin datos personales visibles.',
+    'La plataforma genera un CV protegido sin datos personales visibles.',
     'Empresas validadas buscan talentos y solicitan contacto intermediado.',
     'El Departamento de Empleo revisa, valida y acompana el proceso.',
 ];
@@ -43,6 +45,21 @@ const quickAccess = [
 ];
 
 export default function Welcome() {
+    const [cvUploadsTotal, setCvUploadsTotal] = useState<number | null>(null);
+
+    useEffect(() => {
+        const loadStats = async () => {
+            try {
+                const response = await publicService.stats();
+                setCvUploadsTotal(response.data.cv_uploads_total ?? 0);
+            } catch {
+                setCvUploadsTotal(null);
+            }
+        };
+
+        void loadStats();
+    }, []);
+
     return (
         <PublicLayout>
             <Head title="ProviEmplea 2026" />
@@ -59,7 +76,7 @@ export default function Welcome() {
                             Talento local visible, datos personales protegidos.
                         </h1>
                         <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200 sm:text-xl">
-                            ProviEmplea 2026 moderniza la intermediacion laboral municipal con perfiles laborales, CV ciego, empresas validadas y
+                            ProviEmplea 2026 moderniza la intermediacion laboral municipal con perfiles laborales, CV protegido, empresas validadas y
                             solicitudes de contacto gestionadas por el equipo de empleo.
                         </p>
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -78,8 +95,8 @@ export default function Welcome() {
                         </div>
                         <div className="mt-10 grid max-w-2xl grid-cols-3 gap-3 text-center">
                             <div className="rounded-3xl bg-white/10 p-4 backdrop-blur">
-                                <p className="text-2xl font-black text-provi-primary">CV</p>
-                                <p className="mt-1 text-xs text-slate-300">ciego</p>
+                                <p className="text-2xl font-black text-provi-primary">{cvUploadsTotal ?? '--'}</p>
+                                <p className="mt-1 text-xs text-slate-300">CV protegido</p>
                             </div>
                             <div className="rounded-3xl bg-white/10 p-4 backdrop-blur">
                                 <p className="text-2xl font-black text-provi-yellow">Red</p>
@@ -87,13 +104,13 @@ export default function Welcome() {
                             </div>
                             <div className="rounded-3xl bg-white/10 p-4 backdrop-blur">
                                 <p className="text-2xl font-black text-provi-green">IA</p>
-                                <p className="mt-1 text-xs text-slate-300">regex</p>
+                                <p className="mt-1 text-xs text-slate-300">Analisis con IA</p>
                             </div>
                         </div>
                     </div>
                     <div className="rounded-[2.5rem] border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-xl lg:p-6">
                         <div className="rounded-[2rem] bg-white p-6 text-provi-dark shadow-2xl">
-                            <p className="provi-chip w-fit">CV ciego municipal</p>
+                            <p className="provi-chip w-fit">CV municipal protegido</p>
                             <h2 className="mt-4 text-3xl font-black">Talento PROV-2026-014</h2>
                             <img
                                 src="/scraping/fotos/Palacio_Falabella.jpg"

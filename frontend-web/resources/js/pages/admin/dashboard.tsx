@@ -313,7 +313,7 @@ export default function AdminDashboard() {
                                     <EntityRow
                                         key={request.id}
                                         title={request.company_profile?.company_name ?? `Solicitud #${request.id}`}
-                                        subtitle={`${request.blind_cv_profile?.blind_cv_code ?? 'CV ciego'} · ${request.position_offered ?? 'Sin cargo'} · ${request.status}`}
+                                        subtitle={`${request.blind_cv_profile?.blind_cv_code ?? 'CV protegido'} · ${request.position_offered ?? 'Sin cargo'} · ${request.status}`}
                                     >
                                         <select
                                             className="rounded-md border px-2 py-2 text-sm"
