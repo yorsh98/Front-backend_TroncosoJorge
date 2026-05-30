@@ -2,15 +2,17 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import RoleLayout from '@/layouts/role-layout';
 import { apiErrorMessage, tokenStorage, userStorage } from '@/services/apiClient';
 import { type AuthUser } from '@/services/authService';
 import { companyService } from '@/services/companyService';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { LoaderCircle, RefreshCw, Search } from 'lucide-react';
-import { FormEventHandler, useEffect, useState } from 'react';
+import { FormEventHandler, useCallback, useEffect, useState } from 'react';
 
 type ApiData<T> = { data: T; message?: string };
+type ValidationErrors = Record<string, string>;
 
 type CompanyProfile = {
     id?: number;
@@ -66,11 +68,182 @@ const emptyCompany = {
     position: '',
 };
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const rutRegex = /^\d{7,8}-[\dkK]$/;
+const phoneRegex = /^[+]?[-()\d\s]{8,20}$/;
+const textRegex = /^[\p{L}\p{N}.,:;()\-_/"'\s]+$/u;
+
+const requestStatusLabel: Record<string, string> = {
+    requested: 'Solicitada',
+    under_review: 'En revision',
+    approved: 'Aprobada',
+    rejected: 'Rechazada',
+    contacted: 'Contacto realizado',
+    interview: 'Entrevista',
+    selected: 'Seleccionado/a',
+    not_selected: 'No seleccionado/a',
+    closed: 'Cerrada',
+};
+
+const fieldLabelEs: Record<string, string> = {
+    level: 'Nivel',
+    career: 'Carrera',
+    institution: 'Institucion',
+    completed: 'Completado',
+    start_year: 'Año de inicio',
+    end_year: 'Año de término',
+    start_date: 'Fecha de inicio',
+    end_date: 'Fecha de termino',
+    position: 'Cargo',
+    description: 'Descripcion',
+    company_name: 'Empresa',
+    work_modality: 'Modalidad',
+    work_schedule: 'Jornada',
+    availability: 'Disponibilidad',
+    desired_position: 'Cargo deseado',
+    communes: 'Comunas',
+    preferred_communes: 'Comunas preferidas',
+    location: 'Ubicacion',
+};
+
 const asList = (value: unknown): string[] => {
     if (!value) return [];
     if (Array.isArray(value)) return value.map((item) => (typeof item === 'string' ? item : JSON.stringify(item)));
     if (typeof value === 'object') return Object.values(value).map((item) => (typeof item === 'string' ? item : JSON.stringify(item)));
     return [String(value)];
+};
+
+const toSentenceCase = (value: string): string => value.replace(/_/g, ' ').replace(/\b\w/g, (character) => character.toUpperCase());
+
+const toSpanishLabel = (key: string): string => fieldLabelEs[key] ?? toSentenceCase(key);
+
+const formatPrimitiveValue = (value: unknown): string => {
+    if (value === null || value === undefined) {
+        return '';
+    }
+
+    if (typeof value === 'boolean') {
+        return value ? 'Si' : 'No';
+    }
+
+    if (typeof value === 'number') {
+        return String(value);
+    }
+
+    if (typeof value !== 'string') {
+        return String(value);
+    }
+
+    const trimmed = value.trim();
+    if (!trimmed) {
+        return '';
+    }
+
+    if ((trimmed.startsWith('[') && trimmed.endsWith(']')) || (trimmed.startsWith('{') && trimmed.endsWith('}'))) {
+        try {
+            const parsed = JSON.parse(trimmed) as unknown;
+            if (Array.isArray(parsed)) {
+                return parsed
+                    .map((item) => formatPrimitiveValue(item))
+                    .filter(Boolean)
+                    .join(', ');
+            }
+            if (parsed && typeof parsed === 'object') {
+                return Object.values(parsed)
+                    .map((item) => formatPrimitiveValue(item))
+                    .filter(Boolean)
+                    .join(', ');
+            }
+        } catch {
+            return trimmed;
+        }
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}T/.test(trimmed)) {
+        const parsedDate = new Date(trimmed);
+        if (!Number.isNaN(parsedDate.valueOf())) {
+            return parsedDate.toLocaleDateString('es-CL');
+        }
+    }
+
+    return trimmed;
+};
+
+const asStructuredItems = (value: unknown): Array<Record<string, unknown>> => {
+    if (!value) {
+        return [];
+    }
+
+    if (Array.isArray(value)) {
+        return value.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object' && !Array.isArray(item));
+    }
+
+    if (typeof value === 'object') {
+        return [value as Record<string, unknown>];
+    }
+
+    return [];
+};
+
+const cleanText = (value: string): string => value.replace(/[<>]/g, '').trim();
+
+const validateCompanyForm = (form: typeof emptyCompany): ValidationErrors => {
+    const errors: ValidationErrors = {};
+    const companyName = cleanText(form.company_name);
+    const rut = cleanText(form.rut).toLowerCase();
+    const industry = cleanText(form.industry);
+    const size = cleanText(form.size);
+    const commune = cleanText(form.commune);
+    const address = cleanText(form.address);
+    const contactEmail = cleanText(form.contact_email).toLowerCase();
+    const contactPhone = cleanText(form.contact_phone);
+
+    if (!companyName || companyName.length < 3 || companyName.length > 120 || !textRegex.test(companyName)) {
+        errors.company_name = 'Ingresa una razón social válida (3 a 120 caracteres).';
+    }
+    if (rut && !rutRegex.test(rut)) {
+        errors.rut = 'Ingresa un RUT válido. Ejemplo: 12345678-9.';
+    }
+    if (industry && (industry.length < 2 || industry.length > 80 || !textRegex.test(industry))) {
+        errors.industry = 'El rubro debe tener entre 2 y 80 caracteres válidos.';
+    }
+    if (size && (size.length < 2 || size.length > 40 || !textRegex.test(size))) {
+        errors.size = 'El tamaño debe tener entre 2 y 40 caracteres válidos.';
+    }
+    if (commune && (commune.length < 2 || commune.length > 80 || !textRegex.test(commune))) {
+        errors.commune = 'La comuna debe tener entre 2 y 80 caracteres válidos.';
+    }
+    if (address && (address.length < 5 || address.length > 160 || !textRegex.test(address))) {
+        errors.address = 'La dirección debe tener entre 5 y 160 caracteres válidos.';
+    }
+    if (!contactEmail || !emailRegex.test(contactEmail)) {
+        errors.contact_email = 'Ingresa un correo de contacto válido.';
+    }
+    if (!contactPhone || !phoneRegex.test(contactPhone)) {
+        errors.contact_phone = 'Ingresa un teléfono válido (8 a 20 caracteres).';
+    }
+
+    return errors;
+};
+
+const validateRequestForm = (form: { position_offered: string; message: string }): ValidationErrors => {
+    const errors: ValidationErrors = {};
+    const position = cleanText(form.position_offered);
+    const message = cleanText(form.message);
+
+    if (!position || position.length < 3 || position.length > 80 || !textRegex.test(position)) {
+        errors.position_offered = 'Ingresa un cargo ofrecido válido (3 a 80 caracteres).';
+    }
+    if (!message || message.length < 20 || message.length > 1200 || !textRegex.test(message)) {
+        errors.message = 'El mensaje debe tener entre 20 y 1200 caracteres válidos.';
+    }
+
+    return errors;
+};
+
+const areFiltersValid = (filters: { skill: string; modality: string; schedule: string; availability: string }): boolean => {
+    const values = [filters.skill, filters.modality, filters.schedule, filters.availability].map(cleanText);
+    return values.every((value) => value.length <= 60 && (!value || textRegex.test(value)));
 };
 
 export default function EmpresaDashboard() {
@@ -79,10 +252,13 @@ export default function EmpresaDashboard() {
     const [company, setCompany] = useState<CompanyProfile | null>(null);
     const [form, setForm] = useState(emptyCompany);
     const [talents, setTalents] = useState<BlindCv[]>([]);
+    const [talentsPagination, setTalentsPagination] = useState({ currentPage: 1, lastPage: 1, total: 0 });
     const [selectedTalent, setSelectedTalent] = useState<BlindCv | null>(null);
     const [contactRequests, setContactRequests] = useState<ContactRequest[]>([]);
     const [filters, setFilters] = useState({ skill: '', modality: '', schedule: '', availability: '', disability: false });
     const [requestForm, setRequestForm] = useState({ position_offered: '', message: '' });
+    const [companyFormErrors, setCompanyFormErrors] = useState<ValidationErrors>({});
+    const [requestFormErrors, setRequestFormErrors] = useState<ValidationErrors>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [searching, setSearching] = useState(false);
@@ -90,7 +266,10 @@ export default function EmpresaDashboard() {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
 
-    const loadCompanyData = async () => {
+    const companyFormReady = Object.keys(validateCompanyForm(form)).length === 0;
+    const contactFormReady = Object.keys(validateRequestForm(requestForm)).length === 0;
+
+    const loadCompanyData = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -119,31 +298,46 @@ export default function EmpresaDashboard() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const searchTalents = async () => {
-        setSearching(true);
-        setError('');
+    const searchTalents = useCallback(
+        async (page = 1) => {
+            if (!areFiltersValid(filters)) {
+                setError('Los filtros contienen caracteres no permitidos o exceden el largo máximo.');
+                return;
+            }
 
-        try {
-            const params = new URLSearchParams();
-            Object.entries(filters).forEach(([key, value]) => {
-                if (typeof value === 'boolean') {
-                    if (value) params.set(key, '1');
-                    return;
-                }
-                if (value.trim()) params.set(key, value.trim());
-            });
+            setSearching(true);
+            setError('');
 
-            const query = params.toString() ? `?${params.toString()}` : '';
-            const response = (await companyService.talents(query)) as ApiData<PaginatedTalents>;
-            setTalents(response.data.data ?? []);
-        } catch (caught) {
-            setError(apiErrorMessage(caught, 'No fue posible cargar la vitrina de talentos.'));
-        } finally {
-            setSearching(false);
-        }
-    };
+            try {
+                const params = new URLSearchParams();
+                Object.entries(filters).forEach(([key, value]) => {
+                    if (typeof value === 'boolean') {
+                        if (value) params.set(key, '1');
+                        return;
+                    }
+                    if (value.trim()) params.set(key, value.trim());
+                });
+                params.set('page', String(page));
+
+                const query = params.toString() ? `?${params.toString()}` : '';
+                const response = (await companyService.talents(query)) as ApiData<PaginatedTalents>;
+                const talentsPage = response.data;
+                setTalents(talentsPage.data ?? []);
+                setTalentsPagination({
+                    currentPage: talentsPage.current_page ?? 1,
+                    lastPage: talentsPage.last_page ?? 1,
+                    total: talentsPage.total ?? 0,
+                });
+            } catch (caught) {
+                setError(apiErrorMessage(caught, 'No fue posible cargar la vitrina de talentos.'));
+            } finally {
+                setSearching(false);
+            }
+        },
+        [filters],
+    );
 
     useEffect(() => {
         const token = tokenStorage.get();
@@ -156,13 +350,26 @@ export default function EmpresaDashboard() {
         setUser(userStorage.get<AuthUser>());
         void loadCompanyData();
         void searchTalents();
-    }, []);
+    }, [loadCompanyData, searchTalents]);
 
-    const updateForm = (field: keyof typeof emptyCompany, value: string) => setForm((current) => ({ ...current, [field]: value }));
-    const updateFilter = (field: keyof typeof filters, value: string | boolean) => setFilters((current) => ({ ...current, [field]: value }));
+    const updateForm = (field: keyof typeof emptyCompany, value: string) => {
+        setForm((current) => ({ ...current, [field]: value }));
+        setCompanyFormErrors((current) => ({ ...current, [field]: '' }));
+    };
+
+    const updateFilter = (field: keyof typeof filters, value: string | boolean) => {
+        setFilters((current) => ({ ...current, [field]: typeof value === 'string' ? value.replace(/[<>]/g, '') : value }));
+    };
 
     const saveCompany: FormEventHandler = async (event) => {
         event.preventDefault();
+        const validationErrors = validateCompanyForm(form);
+        if (Object.keys(validationErrors).length > 0) {
+            setCompanyFormErrors(validationErrors);
+            setError('Revisa los campos del perfil empresa antes de guardar.');
+            return;
+        }
+
         setSaving(true);
         setError('');
         setMessage('');
@@ -184,6 +391,7 @@ export default function EmpresaDashboard() {
             const response = (await companyService.talent(blindCvCode)) as ApiData<BlindCv>;
             setSelectedTalent(response.data);
             setRequestForm({ position_offered: '', message: '' });
+            setRequestFormErrors({});
         } catch (caught) {
             setError(apiErrorMessage(caught, 'No fue posible cargar el CV protegido.'));
         }
@@ -192,6 +400,13 @@ export default function EmpresaDashboard() {
     const requestContact: FormEventHandler = async (event) => {
         event.preventDefault();
         if (!selectedTalent) return;
+
+        const validationErrors = validateRequestForm(requestForm);
+        if (Object.keys(validationErrors).length > 0) {
+            setRequestFormErrors(validationErrors);
+            setError('Completa correctamente el formulario de contacto intermediado.');
+            return;
+        }
 
         setRequesting(true);
         setError('');
@@ -215,8 +430,8 @@ export default function EmpresaDashboard() {
             <div className="provi-card mb-6 flex flex-col gap-4 p-6 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                     <p className="provi-chip w-fit">ProviEmplea 2026</p>
-                    <h2 className="mt-3 text-3xl font-black text-provi-dark lg:text-4xl">Vitrina de talentos con CV protegido</h2>
-                    <p className="mt-2 text-provi-muted">{user ? `${user.name} · ${user.email}` : 'Portal empresas municipal'}</p>
+                    <h2 className="text-provi-dark mt-3 text-3xl font-black lg:text-4xl">Vitrina de talentos con CV protegido</h2>
+                    <p className="text-provi-muted mt-2">{user ? `${user.name} · ${user.email}` : 'Portal empresas municipal'}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={() => void searchTalents()} disabled={searching}>
@@ -225,31 +440,35 @@ export default function EmpresaDashboard() {
                 </div>
             </div>
 
-            {message && <div className="mb-4 rounded-2xl bg-provi-green/10 p-4 text-sm font-bold text-provi-green">{message}</div>}
+            {message && <div className="bg-provi-green/10 text-provi-green mb-4 rounded-2xl p-4 text-sm font-bold">{message}</div>}
             <InputError message={error} className="mb-4 rounded-2xl bg-red-50 p-4" />
 
             {!isAuthenticated && (
                 <div className="provi-card mb-6 p-6">
-                    <h3 className="text-2xl font-black text-provi-dark">Acceso para empresas registradas</h3>
-                    <p className="mt-2 text-provi-muted">Para cargar la informacion de empresa y usar la vitrina, inicia sesion con una cuenta Empresa.</p>
+                    <h3 className="text-provi-dark text-2xl font-black">Acceso para empresas registradas</h3>
+                    <p className="text-provi-muted mt-2">
+                        Para cargar la informacion de empresa y usar la vitrina, inicia sesion con una cuenta Empresa.
+                    </p>
                     <div className="mt-4">
-                        <Button onClick={() => (window.location.href = '/login')}>Ingresar</Button>
+                        <Button asChild>
+                            <Link href="/login">Ingresar</Link>
+                        </Button>
                     </div>
                 </div>
             )}
 
             {isAuthenticated && loading ? (
-                <div className="provi-card p-10 text-center text-provi-muted">Cargando informacion empresa...</div>
+                <div className="provi-card text-provi-muted p-10 text-center">Cargando informacion empresa...</div>
             ) : isAuthenticated ? (
                 <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
                     <aside className="grid gap-6">
                         <section className="provi-card p-6">
                             <div className="mb-5 flex items-start justify-between gap-4">
                                 <div>
-                                    <h3 className="text-2xl font-black text-provi-dark">Perfil empresa</h3>
-                                    <p className="text-sm text-provi-muted">Estado: {company?.status ?? 'pending_validation'}</p>
+                                    <h3 className="text-provi-dark text-2xl font-black">Perfil empresa</h3>
+                                    <p className="text-provi-muted text-sm">Estado: {company?.status ?? 'pending_validation'}</p>
                                 </div>
-                                <span className="rounded-full bg-provi-primary/10 px-3 py-1 text-xs font-bold text-provi-secondary">
+                                <span className="bg-provi-primary/10 text-provi-secondary rounded-full px-3 py-1 text-xs font-bold">
                                     {company?.status === 'active' ? 'Puede solicitar contacto' : 'Validacion pendiente'}
                                 </span>
                             </div>
@@ -262,16 +481,25 @@ export default function EmpresaDashboard() {
                                         value={form.company_name}
                                         onChange={(event) => updateForm('company_name', event.target.value)}
                                         required
+                                        maxLength={120}
                                     />
+                                    <InputError message={companyFormErrors.company_name} />
                                 </div>
                                 <div className="grid gap-4 md:grid-cols-2">
                                     <div className="grid gap-2">
                                         <Label htmlFor="rut">RUT</Label>
-                                        <Input id="rut" value={form.rut} onChange={(event) => updateForm('rut', event.target.value)} />
+                                        <Input id="rut" value={form.rut} onChange={(event) => updateForm('rut', event.target.value)} maxLength={10} />
+                                        <InputError message={companyFormErrors.rut} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="industry">Rubro</Label>
-                                        <Input id="industry" value={form.industry} onChange={(event) => updateForm('industry', event.target.value)} />
+                                        <Input
+                                            id="industry"
+                                            value={form.industry}
+                                            onChange={(event) => updateForm('industry', event.target.value)}
+                                            maxLength={80}
+                                        />
+                                        <InputError message={companyFormErrors.industry} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="size">Tamano</Label>
@@ -280,15 +508,29 @@ export default function EmpresaDashboard() {
                                             value={form.size}
                                             onChange={(event) => updateForm('size', event.target.value)}
                                             placeholder="Micro, pequena, mediana"
+                                            maxLength={40}
                                         />
+                                        <InputError message={companyFormErrors.size} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="commune">Comuna</Label>
-                                        <Input id="commune" value={form.commune} onChange={(event) => updateForm('commune', event.target.value)} />
+                                        <Input
+                                            id="commune"
+                                            value={form.commune}
+                                            onChange={(event) => updateForm('commune', event.target.value)}
+                                            maxLength={80}
+                                        />
+                                        <InputError message={companyFormErrors.commune} />
                                     </div>
                                     <div className="grid gap-2 md:col-span-2">
                                         <Label htmlFor="address">Direccion</Label>
-                                        <Input id="address" value={form.address} onChange={(event) => updateForm('address', event.target.value)} />
+                                        <Input
+                                            id="address"
+                                            value={form.address}
+                                            onChange={(event) => updateForm('address', event.target.value)}
+                                            maxLength={160}
+                                        />
+                                        <InputError message={companyFormErrors.address} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="contact_email">Email contacto</Label>
@@ -297,7 +539,10 @@ export default function EmpresaDashboard() {
                                             type="email"
                                             value={form.contact_email}
                                             onChange={(event) => updateForm('contact_email', event.target.value)}
+                                            required
+                                            maxLength={120}
                                         />
+                                        <InputError message={companyFormErrors.contact_email} />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="contact_phone">Telefono contacto</Label>
@@ -305,27 +550,39 @@ export default function EmpresaDashboard() {
                                             id="contact_phone"
                                             value={form.contact_phone}
                                             onChange={(event) => updateForm('contact_phone', event.target.value)}
+                                            required
+                                            maxLength={20}
                                         />
+                                        <InputError message={companyFormErrors.contact_phone} />
                                     </div>
                                 </div>
-                                <Button type="submit" className="bg-provi-secondary font-bold hover:bg-provi-secondary/90" disabled={saving}>
+                                <Button
+                                    type="submit"
+                                    className="bg-provi-secondary hover:bg-provi-secondary/90 font-bold"
+                                    disabled={saving || !companyFormReady}
+                                >
                                     {saving && <LoaderCircle className="h-4 w-4 animate-spin" />}
                                     Guardar empresa
                                 </Button>
+                                {!companyFormReady && (
+                                    <p className="text-provi-muted text-sm">Completa los campos obligatorios con un formato valido para guardar.</p>
+                                )}
                             </form>
                         </section>
 
                         <section className="provi-card p-6">
-                            <h3 className="text-xl font-black text-provi-dark">Solicitudes enviadas</h3>
+                            <h3 className="text-provi-dark text-xl font-black">Solicitudes enviadas</h3>
                             <div className="mt-4 grid gap-3">
-                                {contactRequests.length === 0 && <p className="text-sm text-provi-muted">Aun no hay solicitudes de contacto.</p>}
+                                {contactRequests.length === 0 && <p className="text-provi-muted text-sm">Aun no hay solicitudes de contacto.</p>}
                                 {contactRequests.map((request) => (
-                                    <div key={request.id} className="rounded-2xl bg-provi-light p-4">
-                                        <p className="font-bold text-provi-dark">
+                                    <div key={request.id} className="bg-provi-light rounded-2xl p-4">
+                                        <p className="text-provi-dark font-bold">
                                             {request.blind_cv_profile?.blind_cv_code ?? `Solicitud #${request.id}`}
                                         </p>
-                                        <p className="text-sm text-provi-muted">Estado: {request.status}</p>
-                                        {request.position_offered && <p className="mt-1 text-sm text-provi-muted">Cargo: {request.position_offered}</p>}
+                                        <p className="text-provi-muted text-sm">Estado: {requestStatusLabel[request.status] ?? request.status}</p>
+                                        {request.position_offered && (
+                                            <p className="text-provi-muted mt-1 text-sm">Cargo: {request.position_offered}</p>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -334,39 +591,43 @@ export default function EmpresaDashboard() {
 
                     <main className="grid gap-6">
                         <section className="provi-card p-6">
-                            <h3 className="text-2xl font-black text-provi-dark">Buscar talentos</h3>
+                            <h3 className="text-provi-dark text-2xl font-black">Buscar talentos</h3>
                             <form
                                 className="mt-5 grid gap-4 lg:grid-cols-5"
                                 onSubmit={(event) => {
                                     event.preventDefault();
-                                    void searchTalents();
+                                    void searchTalents(1);
                                 }}
                             >
                                 <Input
                                     placeholder="Habilidad"
                                     value={filters.skill}
                                     onChange={(event) => updateFilter('skill', event.target.value)}
+                                    maxLength={60}
                                 />
                                 <Input
                                     placeholder="Modalidad"
                                     value={filters.modality}
                                     onChange={(event) => updateFilter('modality', event.target.value)}
+                                    maxLength={60}
                                 />
                                 <Input
                                     placeholder="Jornada"
                                     value={filters.schedule}
                                     onChange={(event) => updateFilter('schedule', event.target.value)}
+                                    maxLength={60}
                                 />
                                 <Input
                                     placeholder="Disponibilidad"
                                     value={filters.availability}
                                     onChange={(event) => updateFilter('availability', event.target.value)}
+                                    maxLength={60}
                                 />
-                                <Button type="submit" className="bg-provi-purple font-bold hover:bg-provi-purple/90" disabled={searching}>
+                                <Button type="submit" className="bg-provi-purple hover:bg-provi-purple/90 font-bold" disabled={searching}>
                                     {searching ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                                     Buscar
                                 </Button>
-                                <label className="flex items-center gap-2 text-sm text-provi-muted lg:col-span-5">
+                                <label className="text-provi-muted flex items-center gap-2 text-sm lg:col-span-5">
                                     <input
                                         type="checkbox"
                                         checked={filters.disability}
@@ -376,19 +637,59 @@ export default function EmpresaDashboard() {
                                 </label>
                             </form>
 
+                            <div className="text-provi-muted mt-4 flex items-center justify-between gap-3 text-sm">
+                                <p>Resultados: {talentsPagination.total}</p>
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={searching || talentsPagination.currentPage <= 1}
+                                        onClick={() => void searchTalents(talentsPagination.currentPage - 1)}
+                                    >
+                                        Anterior
+                                    </Button>
+                                    <span>
+                                        Pagina {talentsPagination.currentPage} de {talentsPagination.lastPage}
+                                    </span>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        disabled={searching || talentsPagination.currentPage >= talentsPagination.lastPage}
+                                        onClick={() => void searchTalents(talentsPagination.currentPage + 1)}
+                                    >
+                                        Siguiente
+                                    </Button>
+                                </div>
+                            </div>
+
                             <div className="mt-6 grid gap-4 md:grid-cols-2">
                                 {talents.length === 0 && (
-                                    <p className="text-sm text-provi-muted md:col-span-2">No hay talentos publicados para los filtros actuales.</p>
+                                    <div className="bg-provi-light rounded-2xl p-4 md:col-span-2">
+                                        <p className="text-provi-dark text-sm font-bold">No hay talentos para estos filtros.</p>
+                                        <p className="text-provi-muted mt-1 text-sm">
+                                            Prueba con menos criterios o busca sin filtros para ver todos los perfiles publicados.
+                                        </p>
+                                    </div>
                                 )}
                                 {talents.map((talent) => (
-                                    <article key={talent.blind_cv_code} className="rounded-[1.75rem] border border-white bg-provi-light p-5 shadow-sm">
-                                        <p className="text-xs font-bold tracking-[0.2em] text-provi-secondary uppercase">{talent.blind_cv_code}</p>
-                                        <h4 className="mt-3 line-clamp-3 font-bold text-provi-dark">{talent.summary ?? 'Perfil laboral publicado'}</h4>
+                                    <article
+                                        key={talent.blind_cv_code}
+                                        className="bg-provi-light rounded-[1.75rem] border border-white p-5 shadow-sm"
+                                    >
+                                        <p className="text-provi-secondary text-xs font-bold tracking-[0.2em] uppercase">{talent.blind_cv_code}</p>
+                                        <h4 className="text-provi-dark mt-3 line-clamp-3 font-bold">
+                                            {talent.summary ?? 'Perfil laboral publicado'}
+                                        </h4>
                                         <div className="mt-4 flex flex-wrap gap-2">
                                             {asList(talent.technical_skills)
                                                 .slice(0, 4)
                                                 .map((skill) => (
-                                                    <span key={skill} className="rounded-full bg-white px-3 py-1 text-xs font-medium text-provi-muted shadow-sm">
+                                                    <span
+                                                        key={skill}
+                                                        className="text-provi-muted rounded-full bg-white px-3 py-1 text-xs font-medium shadow-sm"
+                                                    >
                                                         {skill}
                                                     </span>
                                                 ))}
@@ -406,11 +707,16 @@ export default function EmpresaDashboard() {
                                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                                     <div>
                                         <p className="provi-chip w-fit">CV protegido</p>
-                                        <h3 className="mt-3 text-2xl font-black text-provi-dark">{selectedTalent.blind_cv_code}</h3>
-                                        <p className="mt-3 max-w-3xl leading-7 text-provi-muted">{selectedTalent.summary}</p>
+                                        <h3 className="text-provi-dark mt-3 text-2xl font-black">{selectedTalent.blind_cv_code}</h3>
+                                        <p className="text-provi-muted mt-3 max-w-3xl leading-7">{selectedTalent.summary}</p>
                                     </div>
                                     {selectedTalent.show_law_21015 && (
-                                         <span className="rounded-full bg-provi-purple/10 px-3 py-1 text-sm font-bold text-provi-purple">Ley 21.015</span>
+                                        <span
+                                            className="bg-provi-purple/10 text-provi-purple rounded-full px-3 py-1 text-sm font-bold"
+                                            title="La persona declara informacion vinculada a inclusion laboral."
+                                        >
+                                            Ley 21.015
+                                        </span>
                                     )}
                                 </div>
 
@@ -421,9 +727,9 @@ export default function EmpresaDashboard() {
                                     <InfoBlock title="Condiciones deseadas" value={selectedTalent.desired_conditions} />
                                 </div>
 
-                                <form className="mt-6 rounded-[1.75rem] bg-provi-primary/10 p-5" onSubmit={requestContact}>
-                                    <h4 className="text-lg font-black text-provi-dark">Solicitar contacto intermediado</h4>
-                                    <p className="mt-1 text-sm text-provi-muted">
+                                <form className="bg-provi-primary/10 mt-6 rounded-[1.75rem] p-5" onSubmit={requestContact}>
+                                    <h4 className="text-provi-dark text-lg font-black">Solicitar contacto intermediado</h4>
+                                    <p className="text-provi-muted mt-1 text-sm">
                                         La empresa no recibe datos personales directos. El Departamento de Empleo revisa y gestiona el contacto.
                                     </p>
                                     <div className="mt-4 grid gap-4 md:grid-cols-2">
@@ -432,25 +738,51 @@ export default function EmpresaDashboard() {
                                             <Input
                                                 id="position_offered"
                                                 value={requestForm.position_offered}
-                                                onChange={(event) =>
-                                                    setRequestForm((current) => ({ ...current, position_offered: event.target.value }))
-                                                }
+                                                onChange={(event) => {
+                                                    setRequestForm((current) => ({ ...current, position_offered: event.target.value }));
+                                                    setRequestFormErrors((current) => ({ ...current, position_offered: '' }));
+                                                }}
+                                                required
+                                                minLength={3}
+                                                maxLength={80}
                                             />
+                                            <InputError message={requestFormErrors.position_offered} />
                                         </div>
                                         <div className="grid gap-2 md:col-span-2">
                                             <Label htmlFor="request_message">Mensaje al Departamento de Empleo</Label>
-                                            <textarea
+                                            <Textarea
                                                 id="request_message"
                                                 value={requestForm.message}
-                                                onChange={(event) => setRequestForm((current) => ({ ...current, message: event.target.value }))}
-                                                className="border-input bg-background min-h-24 rounded-md border px-3 py-2 text-sm"
+                                                onChange={(event) => {
+                                                    setRequestForm((current) => ({ ...current, message: event.target.value }));
+                                                    setRequestFormErrors((current) => ({ ...current, message: '' }));
+                                                }}
+                                                required
+                                                minLength={20}
+                                                maxLength={1200}
                                             />
+                                            <InputError message={requestFormErrors.message} />
                                         </div>
                                     </div>
-                                    <Button type="submit" className="mt-4 bg-provi-secondary font-bold hover:bg-provi-secondary/90" disabled={requesting}>
+                                    <Button
+                                        type="submit"
+                                        className="bg-provi-secondary hover:bg-provi-secondary/90 mt-4 font-bold"
+                                        disabled={requesting || company?.status !== 'active' || !contactFormReady}
+                                    >
                                         {requesting && <LoaderCircle className="h-4 w-4 animate-spin" />}
                                         Solicitar contacto
                                     </Button>
+                                    {company?.status !== 'active' && (
+                                        <p className="text-provi-muted mt-2 text-sm">
+                                            Tu empresa debe estar en estado Activa para solicitar contacto. Actual estado:{' '}
+                                            {company?.status ?? 'pendiente'}.
+                                        </p>
+                                    )}
+                                    {company?.status === 'active' && !contactFormReady && (
+                                        <p className="text-provi-muted mt-2 text-sm">
+                                            Completa correctamente cargo ofrecido y mensaje para habilitar el envio.
+                                        </p>
+                                    )}
                                 </form>
                             </section>
                         )}
@@ -462,17 +794,42 @@ export default function EmpresaDashboard() {
 }
 
 function InfoBlock({ title, value }: { title: string; value: unknown }) {
+    const structuredItems = asStructuredItems(value);
     const items = asList(value);
 
     return (
-        <div className="rounded-2xl bg-provi-light p-4">
-            <h4 className="font-bold text-provi-dark">{title}</h4>
+        <div className="bg-provi-light rounded-2xl p-4">
+            <h4 className="text-provi-dark font-bold">{title}</h4>
             {items.length === 0 ? (
-                <p className="mt-2 text-sm text-provi-muted">Sin informacion publicada.</p>
+                <p className="text-provi-muted mt-2 text-sm">Sin informacion publicada.</p>
+            ) : structuredItems.length > 0 ? (
+                <div className="mt-3 grid gap-3">
+                    {structuredItems.map((item, index) => {
+                        const entries = Object.entries(item)
+                            .map(([key, rawValue]) => ({ key, value: formatPrimitiveValue(rawValue) }))
+                            .filter((entry) => entry.value);
+
+                        if (entries.length === 0) {
+                            return null;
+                        }
+
+                        return (
+                            <div key={`${title}-${index}`} className="rounded-xl bg-white p-3 text-sm shadow-sm">
+                                <div className="grid gap-1.5">
+                                    {entries.map((entry) => (
+                                        <p key={`${title}-${index}-${entry.key}`} className="text-provi-muted leading-5">
+                                            <span className="text-provi-dark font-semibold">{toSpanishLabel(entry.key)}:</span> {entry.value}
+                                        </p>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
             ) : (
                 <div className="mt-3 flex flex-wrap gap-2">
                     {items.map((item) => (
-                        <span key={item} className="rounded-full bg-white px-3 py-1 text-xs font-medium text-provi-muted shadow-sm">
+                        <span key={item} className="text-provi-muted rounded-full bg-white px-3 py-1 text-xs font-medium shadow-sm">
                             {item}
                         </span>
                     ))}
