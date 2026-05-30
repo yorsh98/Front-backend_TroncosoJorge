@@ -8,7 +8,7 @@ import { type AuthUser } from '@/services/authService';
 import { cvService } from '@/services/cvService';
 import { personService } from '@/services/personService';
 import { Head } from '@inertiajs/react';
-import { LoaderCircle, RefreshCw } from 'lucide-react';
+import { CheckCircle2, LoaderCircle, RefreshCw, ShieldCheck } from 'lucide-react';
 import { FormEventHandler, useEffect, useState } from 'react';
 
 type Completion = {
@@ -52,6 +52,14 @@ type CvAnalysis = {
 };
 
 type ApiData<T> = { data: T; message?: string };
+
+const uploadStatusStyles: Record<string, string> = {
+    analyzed: 'bg-provi-green/10 text-provi-green',
+    queued: 'bg-provi-secondary/10 text-provi-secondary',
+    processing: 'bg-provi-yellow/20 text-amber-700',
+    failed: 'bg-red-100 text-red-700',
+    rejected: 'bg-red-100 text-red-700',
+};
 
 const emptyProfile = {
     summary: '',
@@ -240,15 +248,17 @@ export default function PersonaDashboard() {
         }
     };
 
+    const hasProtectedCv = Boolean(blindCv);
+
     return (
         <RoleLayout role="persona" title="Panel Persona">
             <Head title="Panel Persona" />
 
-            <div className="provi-card mb-6 flex flex-col gap-4 overflow-hidden p-6 lg:flex-row lg:items-center lg:justify-between">
-                <div>
+            <div className="provi-card mb-6 flex min-w-0 flex-col gap-4 overflow-hidden p-6 lg:flex-row lg:items-center lg:justify-between">
+                <div className="min-w-0">
                     <p className="provi-chip w-fit">ProviEmplea 2026</p>
                     <h2 className="mt-3 text-3xl font-black text-provi-dark lg:text-4xl">Completa tu perfil laboral</h2>
-                    <p className="mt-2 text-provi-muted">{user ? `${user.name} · ${user.email}` : 'Portal persona municipal'}</p>
+                    <p className="mt-2 break-words text-provi-muted">{user ? `${user.name} · ${user.email}` : 'Portal persona municipal'}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={() => void loadPersonaData()} disabled={loading}>
@@ -273,16 +283,16 @@ export default function PersonaDashboard() {
             {isAuthenticated && loading ? (
                 <div className="provi-card p-10 text-center text-provi-muted">Cargando informacion persona...</div>
             ) : isAuthenticated ? (
-                <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                    <section className="provi-card p-6">
-                        <div className="mb-6 flex items-center justify-between gap-4">
-                            <div>
+                <div className="grid gap-6 lg:grid-cols-1 2xl:grid-cols-[minmax(320px,0.95fr)_minmax(0,1.25fr)]">
+                    <section className="provi-card min-w-0 p-6">
+                        <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+                            <div className="min-w-0 flex-1">
                                 <h3 className="text-2xl font-black text-provi-dark">Perfil laboral</h3>
-                                <p className="text-sm text-provi-muted">
+                                <p className="break-words text-sm text-provi-muted">
                                     Estado: {profile?.status ?? 'draft'} · Codigo: {profile?.talent_code ?? 'pendiente'}
                                 </p>
                             </div>
-                            <div className="text-right">
+                            <div className="text-left sm:text-right">
                                 <p className="text-4xl font-black text-provi-primary">{completion?.percentage ?? 0}%</p>
                                 <p className="text-xs font-bold tracking-[0.16em] text-provi-muted uppercase">completitud</p>
                             </div>
@@ -391,30 +401,78 @@ export default function PersonaDashboard() {
                         </form>
                     </section>
 
-                    <aside className="grid gap-6">
-                        <section className="provi-card p-6">
+                    <aside className="grid min-w-0 gap-6 overflow-x-hidden">
+                        <section className="provi-card min-w-0 p-6">
                             <h3 className="text-2xl font-black text-provi-dark">Carga de CV</h3>
                             <p className="mt-2 text-sm text-provi-muted">
                                 Formatos aceptados: PDF, DOCX o DOC. Maximo 15 MB. El archivo real queda privado.
                             </p>
-                            <form className="mt-5 grid gap-4" onSubmit={uploadCv}>
-                                <Input type="file" accept=".pdf,.doc,.docx" onChange={(event) => setCvFile(event.target.files?.[0] ?? null)} />
-                                <label className="flex gap-3 rounded-2xl bg-provi-primary/10 p-4 text-sm font-medium text-provi-dark">
-                                    <input type="checkbox" checked={consentAccepted} onChange={(event) => setConsentAccepted(event.target.checked)} />
-                                    Acepto que mi CV sea procesado para generar perfil laboral y CV protegido. Mis datos personales no seran visibles para
-                                    empresas.
+                            <form className="mt-5 grid gap-5" onSubmit={uploadCv}>
+                                <div className="rounded-2xl border border-dashed border-provi-secondary/40 bg-provi-light/60 p-4">
+                                    <Label htmlFor="persona-cv-file" className="mb-2 block text-sm font-bold text-provi-dark">
+                                        Archivo CV
+                                    </Label>
+                                    <Input
+                                        id="persona-cv-file"
+                                        type="file"
+                                        accept=".pdf,.doc,.docx"
+                                        onChange={(event) => setCvFile(event.target.files?.[0] ?? null)}
+                                        className="sr-only"
+                                    />
+                                    <div className="flex min-w-0 flex-wrap items-center gap-3 rounded-xl border border-provi-secondary/25 bg-white p-3">
+                                        <label
+                                            htmlFor="persona-cv-file"
+                                            className="cursor-pointer rounded-full bg-provi-secondary/10 px-4 py-2 text-xs font-bold tracking-[0.06em] text-provi-secondary transition-colors hover:bg-provi-secondary/20"
+                                        >
+                                            Seleccionar archivo
+                                        </label>
+                                        <p className="min-w-0 flex-1 wrap-anywhere text-sm text-provi-dark">
+                                            {cvFile ? cvFile.name : 'Ningun archivo seleccionado'}
+                                        </p>
+                                    </div>
+                                    {!cvFile && <p className="mt-2 text-xs text-provi-muted">Selecciona un archivo para continuar.</p>}
+                                </div>
+
+                                <label className="flex items-start gap-3 rounded-2xl border border-provi-primary/25 bg-provi-primary/10 p-4 text-sm font-medium leading-6 text-provi-dark">
+                                    <input
+                                        type="checkbox"
+                                        checked={consentAccepted}
+                                        onChange={(event) => setConsentAccepted(event.target.checked)}
+                                        className="mt-1 h-4 w-4 rounded border-provi-secondary text-provi-secondary focus-visible:ring-2 focus-visible:ring-provi-secondary/40"
+                                    />
+                                    <span>
+                                        Acepto que mi CV sea procesado para generar perfil laboral y CV protegido. Mis datos personales no seran
+                                        visibles para empresas.
+                                    </span>
                                 </label>
-                                <Button type="submit" className="bg-provi-purple font-bold hover:bg-provi-purple/90" disabled={uploading || !consentAccepted}>
+
+                                <Button
+                                    type="submit"
+                                    className="h-11 w-fit px-6 text-base font-bold bg-provi-purple text-white hover:bg-provi-purple/90"
+                                    disabled={uploading || !consentAccepted}
+                                >
                                     {uploading && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                                    Subir CV
+                                    {uploading ? 'Subiendo CV...' : 'Subir CV'}
                                 </Button>
                             </form>
 
                             <div className="mt-6 grid gap-3">
+                                {uploads.length === 0 && (
+                                    <p className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-provi-muted">
+                                        Aun no tienes cargas de CV. Sube un archivo para iniciar el analisis.
+                                    </p>
+                                )}
+
                                 {uploads.map((upload) => (
-                                    <div key={upload.id} className="rounded-2xl border border-slate-100 bg-white/70 p-4 shadow-sm">
-                                        <p className="font-bold text-provi-dark">{upload.original_filename}</p>
-                                        <p className="text-sm text-provi-muted">Estado: {upload.status}</p>
+                                    <div key={upload.id} className="min-w-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+                                        <div className="flex items-start justify-between gap-3">
+                                            <p className="min-w-0 flex-1 wrap-anywhere font-bold text-provi-dark">{upload.original_filename}</p>
+                                            <span
+                                                className={`rounded-full px-3 py-1 text-xs font-bold tracking-[0.08em] uppercase ${uploadStatusStyles[upload.status] ?? 'bg-slate-100 text-slate-700'}`}
+                                            >
+                                                {upload.status}
+                                            </span>
+                                        </div>
                                         <Button
                                             className="mt-3"
                                             size="sm"
@@ -430,12 +488,12 @@ export default function PersonaDashboard() {
                         </section>
 
                         {analysis && (
-                            <section className="provi-card p-6">
+                            <section className="provi-card min-w-0 overflow-hidden p-6">
                                 <h3 className="text-xl font-black text-provi-dark">Analisis CV #{analysis.id}</h3>
                                 <p className="mt-2 text-sm text-provi-muted">
                                     Fuente: {analysis.source} · Confianza: {analysis.confidence_score ?? 'N/A'}
                                 </p>
-                                <pre className="mt-4 max-h-72 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100">
+                                <pre className="mt-4 max-h-72 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs leading-5 text-slate-100 whitespace-pre-wrap wrap-anywhere">
                                     {JSON.stringify(analysis.result, null, 2)}
                                 </pre>
                                 <Button
@@ -448,19 +506,37 @@ export default function PersonaDashboard() {
                             </section>
                         )}
 
-                        <section className="provi-card p-6">
-                            <div className="flex items-center justify-between gap-4">
-                                <div>
-                                    <h3 className="text-xl font-black text-provi-dark">CV protegido</h3>
-                                    <p className="text-sm text-provi-muted">Preview sin datos personales directos.</p>
+                        <section className="provi-card min-w-0 overflow-hidden p-6">
+                            <h3 className="text-xl font-black text-provi-dark">CV protegido</h3>
+                            <p className="mt-1 text-sm text-provi-muted">Estado de cumplimiento sobre proteccion de datos personales.</p>
+
+                            <div
+                                className={`mt-4 rounded-2xl border p-5 ${hasProtectedCv ? 'border-provi-green/30 bg-provi-green/10' : 'border-provi-yellow/40 bg-provi-yellow/10'}`}
+                            >
+                                <div className="flex items-start gap-3">
+                                    {hasProtectedCv ? (
+                                        <CheckCircle2 className="mt-0.5 h-5 w-5 text-provi-green" />
+                                    ) : (
+                                        <ShieldCheck className="mt-0.5 h-5 w-5 text-amber-700" />
+                                    )}
+                                    <div>
+                                        <p className={`text-sm font-black tracking-[0.08em] uppercase ${hasProtectedCv ? 'text-provi-green' : 'text-amber-700'}`}>
+                                            {hasProtectedCv ? 'Aprobado' : 'Pendiente'}
+                                        </p>
+                                        <p className="mt-1 text-sm text-provi-dark">
+                                            {hasProtectedCv
+                                                ? 'Tu CV se encuentra protegido bajo la normativa de proteccion de datos y no expone datos personales directos.'
+                                                : 'Aun no se detecta un CV protegido. Sube y procesa tu CV para habilitar este estado.'}
+                                        </p>
+                                    </div>
                                 </div>
-                                <Button variant="outline" onClick={() => void requestValidation()}>
+                            </div>
+
+                            {!hasProtectedCv && (
+                                <Button className="mt-4 w-full sm:w-fit" variant="outline" onClick={() => void requestValidation()}>
                                     Solicitar validacion
                                 </Button>
-                            </div>
-                            <pre className="mt-4 max-h-72 overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-slate-100">
-                                {JSON.stringify(blindCv, null, 2)}
-                            </pre>
+                            )}
                         </section>
                     </aside>
                 </div>
