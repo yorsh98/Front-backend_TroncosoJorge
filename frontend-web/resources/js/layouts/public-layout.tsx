@@ -1,9 +1,30 @@
 import AccessibilityWidget from '@/components/accessibility-widget';
+import { authService, type AuthUser } from '@/services/authService';
+import { tokenStorage, userStorage } from '@/services/apiClient';
 import { Link } from '@inertiajs/react';
 import { Building2, ShieldCheck, UserRound } from 'lucide-react';
-import type { PropsWithChildren } from 'react';
+import { type PropsWithChildren, useEffect, useState } from 'react';
 
 export default function PublicLayout({ children }: PropsWithChildren) {
+    const [user, setUser] = useState<AuthUser | null>(null);
+
+    useEffect(() => {
+        if (!tokenStorage.get()) {
+            setUser(null);
+            return;
+        }
+
+        setUser(userStorage.get<AuthUser>());
+    }, []);
+
+    const panelHref = user?.roles.includes('superadmin') || user?.roles.includes('admin_empleo') ? '/admin' : user?.roles.includes('empresa') ? '/empresa' : '/persona';
+
+    const logout = async () => {
+        await authService.logout();
+        setUser(null);
+        window.location.href = '/';
+    };
+
     return (
         <div className="provi-shell min-h-screen text-provi-dark">
             <a
@@ -36,12 +57,38 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                             <ShieldCheck className="h-4 w-4 text-provi-orange" />
                             Admin
                         </Link>
-                        <Link href="/login" className="provi-focus-ring rounded-full border border-provi-secondary/30 px-4 py-2 text-provi-secondary transition hover:bg-provi-secondary/10">
-                            Ingresar
-                        </Link>
-                        <Link href="/register" className="provi-focus-ring rounded-full bg-provi-purple px-4 py-2 text-white shadow-lg shadow-provi-purple/20 transition hover:-translate-y-0.5 hover:bg-provi-purple/90">
-                            Registrarse
-                        </Link>
+                        {user ? (
+                            <>
+                                <Link
+                                    href={panelHref}
+                                    className="provi-focus-ring rounded-full border border-provi-secondary/30 px-4 py-2 text-provi-secondary transition hover:bg-provi-secondary/10"
+                                >
+                                    Mi panel
+                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={() => void logout()}
+                                    className="provi-focus-ring rounded-full bg-provi-purple px-4 py-2 text-white shadow-lg shadow-provi-purple/20 transition hover:-translate-y-0.5 hover:bg-provi-purple/90"
+                                >
+                                    Cerrar sesion
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link
+                                    href="/login"
+                                    className="provi-focus-ring rounded-full border border-provi-secondary/30 px-4 py-2 text-provi-secondary transition hover:bg-provi-secondary/10"
+                                >
+                                    Ingresar
+                                </Link>
+                                <Link
+                                    href="/register"
+                                    className="provi-focus-ring rounded-full bg-provi-purple px-4 py-2 text-white shadow-lg shadow-provi-purple/20 transition hover:-translate-y-0.5 hover:bg-provi-purple/90"
+                                >
+                                    Registrarse
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </nav>
             </header>
